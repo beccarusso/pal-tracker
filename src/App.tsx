@@ -36,6 +36,7 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [newPassive, setNewPassive] = useState("");
   const [newActive, setNewActive] = useState("");
+  const [saveFlash, setSaveFlash] = useState(false);
 
   const selectedPal = pals.find((p) => p.id === selectedPalId) ?? null;
 
@@ -64,7 +65,6 @@ export default function App() {
 
   const filteredPals = useMemo(() => {
     const q = search.trim().toLowerCase();
-
     return !q
       ? sortedPals
       : sortedPals.filter((p) =>
@@ -84,28 +84,29 @@ export default function App() {
   const updatePal = (next: Pal) =>
     setPals((prev) => prev.map((p) => (p.id === next.id ? next : p)));
 
+  const savePals = (currentPals: Pal[]) => {
+    try {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(currentPals));
+      setSaveFlash(true);
+      setTimeout(() => setSaveFlash(false), 1800);
+    } catch (error) {
+      console.warn("Failed to save pals.", error);
+    }
+  };
+
   const setParent = (field: "parent1Id" | "parent2Id", value: ParentRef) => {
     if (!selectedPal) return;
-
     if (value === "wild") {
-      return updatePal({
-        ...selectedPal,
-        parent1Id: "wild",
-        parent2Id: "wild",
-      });
+      return updatePal({ ...selectedPal, parent1Id: "wild", parent2Id: "wild" });
     }
-
     if (wildLocked && field === "parent2Id") return;
-
     updatePal({ ...selectedPal, [field]: value });
   };
 
   const change = <K extends keyof Pal>(key: K, value: Pal[K]) => {
     if (!selectedPal) return;
-
     if (key === "species") {
       const species = value as string;
-
       return updatePal({
         ...selectedPal,
         species,
@@ -116,7 +117,6 @@ export default function App() {
             : selectedPal.name,
       });
     }
-
     updatePal({ ...selectedPal, [key]: value });
   };
 
@@ -129,7 +129,6 @@ export default function App() {
             : max,
         0
       );
-
       return prev.map((pal) =>
         pal.id !== id
           ? pal
@@ -142,7 +141,6 @@ export default function App() {
 
   const addPal = () => {
     const species = speciesOptions[0] ?? "Lamball";
-
     const pal: Pal = {
       id: Date.now(),
       name: species,
@@ -157,16 +155,13 @@ export default function App() {
       favorite: false,
       favoriteOrder: null,
     };
-
     setPals((prev) => [...prev, pal]);
     setSelectedPalId(pal.id);
   };
 
   const deleteSelectedPal = () => {
     if (!selectedPal) return;
-
     const deadId = selectedPal.id;
-
     setPals((prev) =>
       prev
         .filter((p) => p.id !== deadId)
@@ -176,16 +171,11 @@ export default function App() {
           parent2Id: p.parent2Id === deadId ? null : p.parent2Id,
         }))
     );
-
     setSelectedPalId(null);
   };
 
-  const addSkill = (
-    field: "passiveSkills" | "activeSkills",
-    skill: string
-  ) => {
+  const addSkill = (field: "passiveSkills" | "activeSkills", skill: string) => {
     if (!selectedPal || !skill) return;
-
     setPals((prev) =>
       prev.map((pal) =>
         pal.id !== selectedPal.id
@@ -200,20 +190,13 @@ export default function App() {
     );
   };
 
-  const removeSkill = (
-    field: "passiveSkills" | "activeSkills",
-    skill: string
-  ) => {
+  const removeSkill = (field: "passiveSkills" | "activeSkills", skill: string) => {
     if (!selectedPal) return;
-
     setPals((prev) =>
       prev.map((pal) =>
         pal.id !== selectedPal.id
           ? pal
-          : {
-              ...pal,
-              [field]: pal[field].filter((s) => s !== skill),
-            }
+          : { ...pal, [field]: pal[field].filter((s) => s !== skill) }
       )
     );
   };
@@ -239,7 +222,6 @@ export default function App() {
         setSpeciesList(fetchedSpecies);
 
         const saved = localStorage.getItem(LOCAL_KEY);
-
         const raw = saved
           ? (JSON.parse(saved) as RawPal[])
           : await loadJSON<RawPal[]>("/data/my-pals.json");
@@ -257,33 +239,22 @@ export default function App() {
     })();
   }, []);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(pals));
-    } catch (error) {
-      console.warn("Failed to persist pals.", error);
-    }
-  }, [pals]);
-
   if (!selectedPal) {
     return (
       <div className="home-page">
         <div className="home-header-wrap">
           <h1 className="home-title">My Pals</h1>
 
-          <div className="toolbar">
-            <button className="btn" onClick={addPal}>
-              + Add Pal
-            </button>
-          </div>
-
-          <div className="home-search">
+          <div className="home-search-row">
             <input
               className="input"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search pals, species, or element"
             />
+            <button className="btn" onClick={addPal}>
+              + Add Pal
+            </button>
           </div>
 
           <div className="home-intro">
@@ -363,29 +334,23 @@ export default function App() {
       </div>
 
       <div className="right">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            gap: 14,
-            marginBottom: 18,
-          }}
-        >
-          <button className="secondary-btn-sm" onClick={goHome}>
-            Back to Home
-          </button>
-
-          <div
-            style={{
-              fontSize: 14,
-              fontWeight: 700,
-              color: "#fff",
-              textDecoration: "underline",
-              lineHeight: 1,
-            }}
-          >
-            Edit Pal
+        <div className="edit-topbar">
+          <div className="edit-topbar-left">
+            <button className="secondary-btn-sm" onClick={goHome}>
+              Back to Home
+            </button>
+            <div className="edit-label">Edit Pal</div>
+          </div>
+          <div className="edit-topbar-right">
+            <button
+              className={`btn save-btn ${saveFlash ? "save-flash" : ""}`}
+              onClick={() => savePals(pals)}
+            >
+              {saveFlash ? "Saved ✓" : "Save Pal"}
+            </button>
+            <button className="danger" onClick={deleteSelectedPal}>
+              Delete Pal
+            </button>
           </div>
         </div>
 
@@ -401,16 +366,11 @@ export default function App() {
             <div className="hero-text">
               <div className="hero-title-row">
                 <h1 className="edit-title">
-                  <span>{titleOf(selectedPal)}</span>
-                  <span style={{ fontSize: "0.72em", lineHeight: 1 }}>
-                    · Lv. {selectedPal.level}
-                  </span>
+                  <span className="edit-title-name">{titleOf(selectedPal)}</span>
+                  <span className="edit-title-level">· Lv. {selectedPal.level}</span>
                 </h1>
-
                 <button
-                  className={`favorite-btn ${
-                    selectedPal.favorite ? "active" : ""
-                  }`}
+                  className={`favorite-btn ${selectedPal.favorite ? "active" : ""}`}
                   onClick={() => toggleFavorite(selectedPal.id)}
                 >
                   {selectedPal.favorite ? "★" : "☆"}
@@ -441,12 +401,6 @@ export default function App() {
                 )}
               </div>
             </div>
-          </div>
-
-          <div className="top-buttons">
-            <button className="danger" onClick={deleteSelectedPal}>
-              Delete Pal
-            </button>
           </div>
         </div>
 
