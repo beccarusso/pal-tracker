@@ -4,7 +4,7 @@ import "./styles/app.css";
 import PalCard from "./components/PalCard";
 import ParentSelect from "./components/ParentSelect";
 import SkillSection from "./components/SkillsSection";
-import { activeOptions, EMPTY_STATE_IMAGE, passiveOptions, WILD_IMAGE } from "./data/constants";
+import { EMPTY_STATE_IMAGE, getSortedActiveSkills, passiveOptions, WILD_IMAGE } from "./data/constants";
 import { buildChildMap, elementIcon, getParentWarnings, imgError, imgPath, loadJSON, normalizePal, sortPals, titleOf, type RawPal, type SpeciesData } from "./utils/helpers";
 import { supabase } from "./lib/supabase";
 import { loadPals, savePals as savePalsToDb } from "./lib/db";
@@ -124,7 +124,6 @@ export default function App() {
     image: ref === "wild" ? WILD_IMAGE : typeof ref === "number" ? imgPath(palById.get(ref)?.species ?? "") : "",
   });
 
-  // auth listener
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
@@ -136,14 +135,12 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // load species + pals when user is known
   useEffect(() => {
     if (authLoading) return;
     (async () => {
       try {
         const fetchedSpecies = await loadJSON<SpeciesData[]>("/data/species.json");
         setSpeciesList(fetchedSpecies);
-
         let source: RawPal[] = [];
         if (user) {
           const dbData = await loadPals(user.id);
@@ -161,9 +158,12 @@ export default function App() {
     })();
   }, [user, authLoading]);
 
-  // login screen
   if (authLoading) {
-    return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg)", color: "#fff", fontSize: 18 }}>Loading...</div>;
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg)", color: "#fff", fontSize: 18 }}>
+        Loading...
+      </div>
+    );
   }
 
   if (!user) {
@@ -308,15 +308,22 @@ export default function App() {
         </div>
 
         <SkillSection
-          title="Passive Skills" value={newPassive} setValue={setNewPassive}
-          options={passiveOptions} skills={selectedPal.passiveSkills}
+          title="Passive Skills"
+          value={newPassive}
+          setValue={setNewPassive}
+          options={passiveOptions}
+          skills={selectedPal.passiveSkills}
           onAdd={() => { updateSkill("passiveSkills", newPassive, "add"); setNewPassive(""); }}
           onRemove={(s) => updateSkill("passiveSkills", s, "remove")}
           placeholder="Select passive skill"
         />
         <SkillSection
-          title="Active Skills" value={newActive} setValue={setNewActive}
-          options={activeOptions} skills={selectedPal.activeSkills}
+          title="Active Skills"
+          value={newActive}
+          setValue={setNewActive}
+          skillEntries={getSortedActiveSkills(selectedPal.element)}
+          palElements={selectedPal.element}
+          skills={selectedPal.activeSkills}
           onAdd={() => { updateSkill("activeSkills", newActive, "add"); setNewActive(""); }}
           onRemove={(s) => updateSkill("activeSkills", s, "remove")}
           placeholder="Select active skill"
