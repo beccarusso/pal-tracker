@@ -271,6 +271,12 @@ body {
   cursor: pointer;
 }
 
+.favorite-btn-home {
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+}
+
 .favorite-btn.active {
   background: #2a2340;
   border-color: #8a6b18;
@@ -286,6 +292,13 @@ body {
   position: absolute;
   top: 10px;
   right: 10px;
+  z-index: 2;
+}
+
+.favorite-corner-home {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
   z-index: 2;
 }
 
@@ -336,6 +349,7 @@ body {
 .home-card {
   position: relative;
   padding: 18px;
+  padding-bottom: 48px;
   border-radius: 22px;
   border: 1px solid var(--border);
   background: var(--panel);

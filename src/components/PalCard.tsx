@@ -40,9 +40,9 @@ export default function PalCard({
         if (e.key === "Enter" || e.key === " ") onSelect(pal.id);
       }}
     >
-      <div className="favorite-corner">
+      <div className={home ? "favorite-corner-home" : "favorite-corner"}>
         <button
-          className={`favorite-btn ${pal.favorite ? "active" : ""}`}
+          className={`favorite-btn ${home ? "favorite-btn-home" : ""} ${pal.favorite ? "active" : ""}`}
           onClick={(e) => {
             e.stopPropagation();
             onToggleFavorite(pal.id);
@@ -60,16 +60,12 @@ export default function PalCard({
             className={home ? "img-home" : "img-sm"}
             onError={imgError}
           />
-
           <div className={textClass}>
             <div className={titleRowClass}>
               <div className={titleClass}>
-                <span>{titleOf(pal)}</span>
-                <span style={{ fontSize: "0.78em", lineHeight: 1 }}>
-                  · Lv. {pal.level}
-                </span>
+                <span className="card-title-name">{titleOf(pal)}</span>
+                <span className="card-title-level">&nbsp;· Lv. {pal.level}</span>
               </div>
-
               <div className="element-icons">
                 {pal.element.map((el) => (
                   <img
@@ -83,9 +79,7 @@ export default function PalCard({
                 ))}
               </div>
             </div>
-
-            <div className={home ? "home-meta" : "meta"}>Species: {pal.species}</div>
-            <div className={home ? "home-meta" : "meta"}>Level: {pal.level}</div>
+            <div className={home ? "home-meta" : "meta"}>{pal.species}</div>
           </div>
         </div>
 
