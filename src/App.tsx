@@ -38,10 +38,12 @@ export default function App() {
   const [newActive, setNewActive] = useState("");
 
   const selectedPal = pals.find((p) => p.id === selectedPalId) ?? null;
+
   const speciesMap = useMemo(
     () => new Map(speciesList.map((s) => [s.species, s.element])),
     [speciesList]
   );
+
   const speciesOptions = useMemo(
     () =>
       [...new Set(speciesList.map((s) => s.species))].sort((a, b) =>
@@ -49,16 +51,20 @@ export default function App() {
       ),
     [speciesList]
   );
+
   const palById = useMemo(() => new Map(pals.map((p) => [p.id, p])), [pals]);
   const childMap = useMemo(() => buildChildMap(pals), [pals]);
+
   const parentWarnings = useMemo(
     () => getParentWarnings(selectedPal, childMap),
     [selectedPal, childMap]
   );
+
   const sortedPals = useMemo(() => sortPals(pals), [pals]);
 
   const filteredPals = useMemo(() => {
     const q = search.trim().toLowerCase();
+
     return !q
       ? sortedPals
       : sortedPals.filter((p) =>
@@ -69,6 +75,7 @@ export default function App() {
   }, [sortedPals, search]);
 
   const getElements = (species: string) => speciesMap.get(species) ?? ["neutral"];
+
   const wildLocked =
     selectedPal?.parent1Id === "wild" || selectedPal?.parent2Id === "wild";
 
@@ -79,6 +86,7 @@ export default function App() {
 
   const setParent = (field: "parent1Id" | "parent2Id", value: ParentRef) => {
     if (!selectedPal) return;
+
     if (value === "wild") {
       return updatePal({
         ...selectedPal,
@@ -86,7 +94,9 @@ export default function App() {
         parent2Id: "wild",
       });
     }
+
     if (wildLocked && field === "parent2Id") return;
+
     updatePal({ ...selectedPal, [field]: value });
   };
 
@@ -95,6 +105,7 @@ export default function App() {
 
     if (key === "species") {
       const species = value as string;
+
       return updatePal({
         ...selectedPal,
         species,
@@ -153,6 +164,7 @@ export default function App() {
 
   const deleteSelectedPal = () => {
     if (!selectedPal) return;
+
     const deadId = selectedPal.id;
 
     setPals((prev) =>
@@ -227,6 +239,7 @@ export default function App() {
         setSpeciesList(fetchedSpecies);
 
         const saved = localStorage.getItem(LOCAL_KEY);
+
         const raw = saved
           ? (JSON.parse(saved) as RawPal[])
           : await loadJSON<RawPal[]>("/data/my-pals.json");
@@ -350,6 +363,32 @@ export default function App() {
       </div>
 
       <div className="right">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            gap: 14,
+            marginBottom: 18,
+          }}
+        >
+          <button className="secondary-btn-sm" onClick={goHome}>
+            Back to Home
+          </button>
+
+          <div
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: "#fff",
+              textDecoration: "underline",
+              lineHeight: 1,
+            }}
+          >
+            Edit Pal
+          </div>
+        </div>
+
         <div className="top">
           <div className="hero-wrap">
             <img
@@ -360,14 +399,14 @@ export default function App() {
             />
 
             <div className="hero-text">
-              <div className="hero-top-button-row">
-                <button className="secondary-btn-sm" onClick={goHome}>
-                  Back to Home
-                </button>
-              </div>
-
               <div className="hero-title-row">
-                <h1 className="edit-title">Edit Pal</h1>
+                <h1 className="edit-title">
+                  <span>{titleOf(selectedPal)}</span>
+                  <span style={{ fontSize: "0.72em", lineHeight: 1 }}>
+                    · Lv. {selectedPal.level}
+                  </span>
+                </h1>
+
                 <button
                   className={`favorite-btn ${
                     selectedPal.favorite ? "active" : ""
@@ -378,9 +417,7 @@ export default function App() {
                 </button>
               </div>
 
-              <div className="edit-subtitle">
-                {titleOf(selectedPal)} · {selectedPal.species}
-              </div>
+              <div className="edit-subtitle">{selectedPal.species}</div>
 
               <div
                 className="element-display"

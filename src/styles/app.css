@@ -67,18 +67,22 @@ body {
 }
 
 .card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 22px;
   font-weight: 700;
   text-align: left;
+  line-height: 1.1;
   margin-bottom: 8px;
 }
 
 .card-title-row,
 .home-card-title-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .chip {
@@ -115,6 +119,9 @@ body {
 }
 
 .edit-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
   font-size: 42px;
   line-height: 1.05;
@@ -150,15 +157,6 @@ body {
 .element-chip .element-icon {
   width: 13px;
   height: 13px;
-  top: 0;
-}
-
-.element-chip-icon {
-  width: 13px;
-  height: 13px;
-  object-fit: contain;
-  display: block;
-  flex-shrink: 0;
 }
 
 .element-chip-text {
@@ -179,17 +177,17 @@ body {
 }
 
 .element-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
-  position: relative;
-  top: -2px;
+  display: block;
 }
 
 .element-icons {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .favorite-btn {
@@ -282,9 +280,13 @@ body {
 }
 
 .home-card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 24px;
   font-weight: 700;
   text-align: left;
+  line-height: 1.1;
   margin-bottom: 8px;
 }
 
@@ -369,10 +371,6 @@ body {
   gap: 10px;
   margin-bottom: 6px;
   min-width: 0;
-}
-
-.hero-top-button-row {
-  margin-bottom: 8px;
 }
 
 .hero-wrap {
