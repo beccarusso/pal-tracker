@@ -20,8 +20,6 @@ export default function App() {
   const [selectedPalId, setSelectedPalId] = useState<number | null>(null);
   const [hoveredPalId, setHoveredPalId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
-  const [newPassive, setNewPassive] = useState("");
-  const [newActive, setNewActive] = useState("");
 
   const selectedPal = pals.find((p) => p.id === selectedPalId) ?? null;
   const isSaved = selectedPalId !== null && savedIds.has(selectedPalId) && !dirtyIds.has(selectedPalId);
@@ -109,14 +107,22 @@ export default function App() {
     setDirtyIds((prev) => { const next = new Set(prev); next.delete(deadId); return next; });
   };
 
+  // auto-saves after skill add/remove
   const updateSkill = (field: "passiveSkills" | "activeSkills", skill: string, action: "add" | "remove") => {
-    if (!selectedPal || (action === "add" && !skill)) return;
-    updatePal({
+    if (!selectedPal || !user) return;
+    const updated: Pal = {
       ...selectedPal,
       [field]: action === "add"
         ? selectedPal[field].includes(skill) ? selectedPal[field] : [...selectedPal[field], skill]
         : selectedPal[field].filter((s) => s !== skill),
-    });
+    };
+    const nextPals = pals.map((p) => (p.id === updated.id ? updated : p));
+    setPals(nextPals);
+    // auto-save immediately
+    savePalsToDb(user.id, nextPals).then(() => {
+      setSavedIds(new Set(nextPals.map((p) => p.id)));
+      setDirtyIds((prev) => { const next = new Set(prev); next.delete(selectedPal.id); return next; });
+    }).catch((e) => console.warn("Failed to auto-save skills.", e));
   };
 
   const getParentInfo = (ref: ParentRef) => ({
@@ -309,24 +315,20 @@ export default function App() {
 
         <SkillSection
           title="Passive Skills"
-          value={newPassive}
-          setValue={setNewPassive}
           options={passiveOptions}
           skills={selectedPal.passiveSkills}
-          onAdd={() => { updateSkill("passiveSkills", newPassive, "add"); setNewPassive(""); }}
+          max={4}
+          onAdd={(s) => updateSkill("passiveSkills", s, "add")}
           onRemove={(s) => updateSkill("passiveSkills", s, "remove")}
-          placeholder="Select passive skill"
         />
         <SkillSection
           title="Active Skills"
-          value={newActive}
-          setValue={setNewActive}
           skillEntries={getSortedActiveSkills(selectedPal.element)}
           palElements={selectedPal.element}
           skills={selectedPal.activeSkills}
-          onAdd={() => { updateSkill("activeSkills", newActive, "add"); setNewActive(""); }}
+          max={3}
+          onAdd={(s) => updateSkill("activeSkills", s, "add")}
           onRemove={(s) => updateSkill("activeSkills", s, "remove")}
-          placeholder="Select active skill"
         />
       </div>
     </div>
