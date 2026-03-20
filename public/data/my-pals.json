@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "name": "Lamball",
+    "species": "Lamball",
+    "level": 5,
+    "passiveSkills": ["Workaholic"],
+    "activeSkills": ["Air Cannon"],
+    "parent1Id": null,
+    "parent2Id": null,
+    "notes": "Starter pal"
+  },
+  {
+    "id": 2,
+    "name": "Foxparks",
+    "species": "Foxparks",
+    "level": 10,
+    "passiveSkills": ["Swift"],
+    "activeSkills": ["Ignis Blast"],
+    "parent1Id": null,
+    "parent2Id": null,
+    "notes": ""
+  }
+]
