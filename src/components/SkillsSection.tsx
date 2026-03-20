@@ -43,9 +43,11 @@ export default function SkillSection({
   const getPassiveTier = (name: string): PassiveEntry["tier"] =>
     passiveEntries.find((e) => e.name === name)?.tier ?? "normal";
 
-  // sort chips: for passives sort by tier; for actives keep insertion order
   const sortedSkills = options
-    ? [...skills].sort((a, b) => TIER_ORDER[getPassiveTier(a)] - TIER_ORDER[getPassiveTier(b)])
+    ? [...skills].sort((a, b) => {
+        const tierDiff = TIER_ORDER[getPassiveTier(a)] - TIER_ORDER[getPassiveTier(b)];
+        return tierDiff !== 0 ? tierDiff : a.localeCompare(b);
+      })
     : skills;
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
