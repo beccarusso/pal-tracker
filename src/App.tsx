@@ -4,10 +4,15 @@ import "./styles/app.css";
 import PalCard from "./components/PalCard";
 import ParentSelect from "./components/ParentSelect";
 import SkillSection from "./components/SkillsSection";
-import { activeOptions, EMPTY_STATE_IMAGE, LOCAL_KEY, passiveOptions, WILD_IMAGE } from "./data/constants";
+import { activeOptions, EMPTY_STATE_IMAGE, passiveOptions, WILD_IMAGE } from "./data/constants";
 import { buildChildMap, elementIcon, getParentWarnings, imgError, imgPath, loadJSON, normalizePal, sortPals, titleOf, type RawPal, type SpeciesData } from "./utils/helpers";
+import { supabase } from "./lib/supabase";
+import { loadPals, savePals as savePalsToDb } from "./lib/db";
+import type { User } from "@supabase/supabase-js";
 
 export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [speciesList, setSpeciesList] = useState<SpeciesData[]>([]);
   const [pals, setPals] = useState<Pal[]>([]);
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
@@ -44,10 +49,10 @@ export default function App() {
     markDirty(next.id);
   };
 
-  const savePals = (currentPals: Pal[]) => {
-    if (!selectedPalId) return;
+  const savePals = async (currentPals: Pal[]) => {
+    if (!selectedPalId || !user) return;
     try {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(currentPals));
+      await savePalsToDb(user.id, currentPals);
       setSavedIds(new Set(currentPals.map((p) => p.id)));
       setDirtyIds((prev) => { const next = new Set(prev); next.delete(selectedPalId); return next; });
     } catch (e) { console.warn("Failed to save pals.", e); }
@@ -88,18 +93,16 @@ export default function App() {
   };
 
   const deleteSelectedPal = () => {
-    if (!selectedPal) return;
+    if (!selectedPal || !user) return;
     const deadId = selectedPal.id;
     setPals((prev) => {
       const remaining = prev
         .filter((p) => p.id !== deadId)
         .map((p) => ({ ...p, parent1Id: p.parent1Id === deadId ? null : p.parent1Id, parent2Id: p.parent2Id === deadId ? null : p.parent2Id }));
-
-      // pick the next pal to select, or go home if none left
+      try { savePalsToDb(user.id, remaining); } catch (e) { console.warn("Failed to persist deletion.", e); }
       const currentIndex = prev.findIndex((p) => p.id === deadId);
       const next = remaining[currentIndex] ?? remaining[currentIndex - 1] ?? null;
       setSelectedPalId(next?.id ?? null);
-
       return remaining;
     });
     setSavedIds((prev) => { const next = new Set(prev); next.delete(deadId); return next; });
@@ -121,27 +124,72 @@ export default function App() {
     image: ref === "wild" ? WILD_IMAGE : typeof ref === "number" ? imgPath(palById.get(ref)?.species ?? "") : "",
   });
 
+  // auth listener
   useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+      setAuthLoading(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // load species + pals when user is known
+  useEffect(() => {
+    if (authLoading) return;
     (async () => {
       try {
         const fetchedSpecies = await loadJSON<SpeciesData[]>("/data/species.json");
         setSpeciesList(fetchedSpecies);
-        const saved = localStorage.getItem(LOCAL_KEY);
-        const raw = saved ? (JSON.parse(saved) as RawPal[]) : await loadJSON<RawPal[]>("/data/my-pals.json");
-        const source = Array.isArray(raw) && raw.length ? raw : await loadJSON<RawPal[]>("/data/my-pals.json");
+
+        let source: RawPal[] = [];
+        if (user) {
+          const dbData = await loadPals(user.id);
+          if (dbData && Array.isArray(dbData) && dbData.length) {
+            source = dbData as RawPal[];
+          } else {
+            source = await loadJSON<RawPal[]>("/data/my-pals.json");
+          }
+        }
         const loaded = source.map((p) => normalizePal(p, fetchedSpecies, source));
         setPals(loaded);
         setSavedIds(new Set(loaded.map((p) => p.id)));
         setSelectedPalId(null);
       } catch (e) { console.error("Failed to load app data.", e); }
     })();
-  }, []);
+  }, [user, authLoading]);
+
+  // login screen
+  if (authLoading) {
+    return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg)", color: "#fff", fontSize: 18 }}>Loading...</div>;
+  }
+
+  if (!user) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg)", color: "#fff", gap: 24 }}>
+        <h1 style={{ fontSize: 48, margin: 0 }}>My Pals</h1>
+        <p style={{ color: "var(--text-muted)", fontSize: 18 }}>Sign in to access your pal collection</p>
+        <button
+          className="btn"
+          style={{ fontSize: 16, padding: "14px 28px" }}
+          onClick={() => supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } })}
+        >
+          Sign in with Google
+        </button>
+      </div>
+    );
+  }
 
   if (!selectedPal) {
     return (
       <div className="home-page">
         <div className="home-header-wrap">
-          <h1 className="home-title">My Pals</h1>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", marginBottom: 8 }}>
+            <h1 className="home-title" style={{ margin: 0 }}>My Pals</h1>
+            <button className="secondary-btn-sm" onClick={() => supabase.auth.signOut()}>Sign Out</button>
+          </div>
           <div className="home-search-row">
             <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pals, species, or element" />
             <button className="btn" onClick={addPal}>+ Add Pal</button>
