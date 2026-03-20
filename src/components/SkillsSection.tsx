@@ -8,12 +8,12 @@ type Props = {
   onAdd: (skill: string) => void;
   onRemove: (skill: string) => void;
   max: number;
-  // passive
   options?: string[];
-  // active
   skillEntries?: SkillEntry[];
   palElements?: string[];
 };
+
+const TIER_ORDER: Record<PassiveEntry["tier"], number> = { platinum: 0, gold: 1, normal: 2 };
 
 const TIER_STYLE: Record<PassiveEntry["tier"], React.CSSProperties> = {
   platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", marginRight: 5 },
@@ -39,6 +39,14 @@ export default function SkillSection({
 }: Props) {
   const native = new Set(palElements.map((e) => e.toLowerCase()));
   const atMax = skills.length >= max;
+
+  const getPassiveTier = (name: string): PassiveEntry["tier"] =>
+    passiveEntries.find((e) => e.name === name)?.tier ?? "normal";
+
+  // sort chips: for passives sort by tier; for actives keep insertion order
+  const sortedSkills = options
+    ? [...skills].sort((a, b) => TIER_ORDER[getPassiveTier(a)] - TIER_ORDER[getPassiveTier(b)])
+    : skills;
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -94,9 +102,6 @@ export default function SkillSection({
     return null;
   };
 
-  const getPassiveTier = (name: string): PassiveEntry["tier"] =>
-    passiveEntries.find((e) => e.name === name)?.tier ?? "normal";
-
   return (
     <div className="section">
       <h2 className="section-title">
@@ -120,14 +125,12 @@ export default function SkillSection({
       )}
 
       <div className="chips">
-        {skills.length === 0 && (
-          <span className="plain" style={{ fontSize: 14 }}>
-            No {title.toLowerCase()}
-          </span>
+        {sortedSkills.length === 0 && (
+          <span className="plain" style={{ fontSize: 14 }}>No {title.toLowerCase()}</span>
         )}
-        {skills.map((s) => {
+        {sortedSkills.map((s) => {
           const activeEntry = skillEntries?.find((e) => e.name === s);
-          const passiveTier = !skillEntries ? getPassiveTier(s) : null;
+          const passiveTier = options ? getPassiveTier(s) : null;
           return (
             <button type="button" key={s} className="chip" onClick={() => onRemove(s)}>
               {activeEntry && (
