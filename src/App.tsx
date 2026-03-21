@@ -25,15 +25,13 @@ export default function App() {
   });
   const [hoveredPalId, setHoveredPalId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+  const [palListOpen, setPalListOpen] = useState(false);
 
-  // wrap setter so it always syncs to sessionStorage
   const setSelectedPalId = (id: number | null) => {
     _setSelectedPalId(id);
     if (id === null) sessionStorage.removeItem(SESSION_KEY);
     else sessionStorage.setItem(SESSION_KEY, String(id));
   };
-
-  // cast for PalCard which expects Dispatch<SetStateAction<number | null>>
   const selectPalId = setSelectedPalId as React.Dispatch<React.SetStateAction<number | null>>;
 
   const selectedPal = pals.find((p) => p.id === selectedPalId) ?? null;
@@ -103,6 +101,7 @@ export default function App() {
     const pal: Pal = { id: Date.now(), name: species, species, element: getElements(species), level: 1, passiveSkills: [], activeSkills: [], parent1Id: null, parent2Id: null, notes: "", favorite: false, favoriteOrder: null };
     setPals((prev) => [...prev.filter((p) => savedIds.has(p.id)), pal]);
     setSelectedPalId(pal.id);
+    setPalListOpen(false);
   };
 
   const deleteSelectedPal = () => {
@@ -124,17 +123,16 @@ export default function App() {
 
   const updateSkill = (field: "passiveSkills" | "activeSkills", skill: string, action: "add" | "remove") => {
     if (!selectedPal || !user) return;
-    const updated: Pal = {
-      ...selectedPal,
-      [field]: action === "add"
-        ? selectedPal[field].includes(skill) ? selectedPal[field] : [...selectedPal[field], skill]
-        : selectedPal[field].filter((s) => s !== skill),
-    };
+    const current = selectedPal[field];
+    const next = action === "add"
+      ? current.includes(skill) ? current : [...current, skill]
+      : current.filter((s) => s !== skill);
+    const updated: Pal = { ...selectedPal, [field]: next };
     const nextPals = pals.map((p) => (p.id === updated.id ? updated : p));
     setPals(nextPals);
     savePalsToDb(user.id, nextPals).then(() => {
       setSavedIds(new Set(nextPals.map((p) => p.id)));
-      setDirtyIds((prev) => { const next = new Set(prev); next.delete(selectedPal.id); return next; });
+      setDirtyIds((prev) => { const d = new Set(prev); d.delete(selectedPal.id); return d; });
     }).catch((e) => console.warn("Failed to auto-save skills.", e));
   };
 
@@ -172,17 +170,12 @@ export default function App() {
         const loaded = source.map((p) => normalizePal(p, fetchedSpecies, source));
         setPals(loaded);
         setSavedIds(new Set(loaded.map((p) => p.id)));
-        // don't reset selectedPalId here — let sessionStorage value persist
       } catch (e) { console.error("Failed to load app data.", e); }
     })();
   }, [user, authLoading]);
 
   if (authLoading) {
-    return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg)", color: "#fff", fontSize: 18 }}>
-        Loading...
-      </div>
-    );
+    return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg)", color: "#fff", fontSize: 18 }}>Loading...</div>;
   }
 
   if (!user) {
@@ -190,11 +183,7 @@ export default function App() {
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg)", color: "#fff", gap: 24 }}>
         <h1 style={{ fontSize: 48, margin: 0 }}>My Pals</h1>
         <p style={{ color: "var(--text-muted)", fontSize: 18 }}>Sign in to access your pal collection</p>
-        <button
-          className="btn"
-          style={{ fontSize: 16, padding: "14px 28px" }}
-          onClick={() => supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } })}
-        >
+        <button className="btn" style={{ fontSize: 16, padding: "14px 28px" }} onClick={() => supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } })}>
           Sign in with Google
         </button>
       </div>
@@ -234,16 +223,56 @@ export default function App() {
   return (
     <div className="page">
       <div className="left">
-        <h1 className="h1-link" onClick={goHome}>My Pals</h1>
-        <div className="toolbar">
-          <button className="btn" onClick={addPal}>+ Add Pal</button>
+        {/* static section: never scrolls */}
+        <div className="left-static">
+          <h1 className="h1-link" onClick={goHome}>My Pals</h1>
+          <div className="toolbar">
+            <button className="btn" onClick={addPal}>+ Add Pal</button>
+          </div>
+          <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pals, species, or element" style={{ marginBottom: 14 }} />
         </div>
-        <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pals, species, or element" style={{ marginBottom: 18 }} />
+
+        {/* desktop: full scrollable list */}
         <div className="list">
           {filteredPals.map((pal) => (
             <PalCard key={pal.id} pal={pal} selected={selectedPalId === pal.id} hovered={hoveredPalId === pal.id} onHover={setHoveredPalId} onSelect={selectPalId} onToggleFavorite={toggleFavorite} />
           ))}
           {!filteredPals.length && <div className="card"><span className="plain">No pals match your search.</span></div>}
+        </div>
+
+        {/* mobile: selected pal + chevron dropdown */}
+        <div className="mobile-pal-switcher">
+          <div className="mobile-pal-current" onClick={() => setPalListOpen((o) => !o)}>
+            <div className="mobile-pal-current-info">
+              <img src={imgPath(selectedPal.species)} alt={selectedPal.species} className="img-sm" style={{ width: 44, height: 44 }} onError={imgError} />
+              <div style={{ minWidth: 0 }}>
+                <div className="card-title">
+                  <span className="card-title-name">{titleOf(selectedPal)}</span>
+                  <span className="card-title-level">&nbsp;· Lv. {selectedPal.level}</span>
+                </div>
+                <div className="meta" style={{ marginBottom: 0 }}>{selectedPal.species}</div>
+              </div>
+            </div>
+            <span className={`mobile-pal-chevron ${palListOpen ? "open" : ""}`}>▼</span>
+          </div>
+          {palListOpen && (
+            <div className="mobile-pal-dropdown">
+              {filteredPals.map((pal) => (
+                <PalCard
+                  key={pal.id}
+                  pal={pal}
+                  selected={selectedPalId === pal.id}
+                  hovered={hoveredPalId === pal.id}
+                  onHover={setHoveredPalId}
+                  onSelect={(id) => {
+                    selectPalId(id);
+                    setPalListOpen(false);
+                  }}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -290,25 +319,20 @@ export default function App() {
         <div className="grid">
           <label htmlFor="pal-name">Name</label>
           <input id="pal-name" className="input" value={selectedPal.name} onChange={(e) => change("name", e.target.value)} />
-
           <label htmlFor="pal-species">Species</label>
           <select id="pal-species" className="input" value={selectedPal.species} onChange={(e) => change("species", e.target.value)}>
             {speciesOptions.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
-
           <label htmlFor="pal-level">Level</label>
           <input id="pal-level" className="input" type="number" min={1} value={selectedPal.level} onChange={(e) => change("level", Number(e.target.value) || 1)} />
-
           <ParentSelect id="parent-1" label="Parent 1" pals={pals} selectedPal={selectedPal} field="parent1Id" value={selectedPal.parent1Id} other={selectedPal.parent2Id} onChange={setParent} />
           <ParentSelect id="parent-2" label="Parent 2" pals={pals} selectedPal={selectedPal} field="parent2Id" value={selectedPal.parent2Id} other={selectedPal.parent1Id} disabled={wildLocked} onChange={setParent} />
-
           {!!parentWarnings.warnings.length && (
             <div className="warning-box">{parentWarnings.warnings.map((w) => <div key={w}>• {w}</div>)}</div>
           )}
           {!!parentWarnings.notes.length && !parentWarnings.warnings.length && (
             <div className="note-box">{parentWarnings.notes.map((n) => <div key={n}>• {n}</div>)}</div>
           )}
-
           <label>Parents</label>
           <div className="parent-wrap">
             {parents.length ? parents.map((ref, i) => {
@@ -321,25 +345,18 @@ export default function App() {
               );
             }) : <span className="plain">None</span>}
           </div>
-
           <label htmlFor="pal-notes">Notes</label>
           <textarea id="pal-notes" className="input" value={selectedPal.notes} onChange={(e) => change("notes", e.target.value)} style={{ minHeight: 100, resize: "vertical" }} />
         </div>
 
         <SkillSection
-          title="Passive Skills"
-          options={passiveOptions}
-          skills={selectedPal.passiveSkills}
-          max={4}
+          title="Passive Skills" options={passiveOptions} skills={selectedPal.passiveSkills} max={4}
           onAdd={(s) => updateSkill("passiveSkills", s, "add")}
           onRemove={(s) => updateSkill("passiveSkills", s, "remove")}
         />
         <SkillSection
-          title="Active Skills"
-          skillEntries={getSortedActiveSkills(selectedPal.element)}
-          palElements={selectedPal.element}
-          skills={selectedPal.activeSkills}
-          max={3}
+          title="Active Skills" skillEntries={getSortedActiveSkills(selectedPal.element)}
+          palElements={selectedPal.element} skills={selectedPal.activeSkills} max={3}
           onAdd={(s) => updateSkill("activeSkills", s, "add")}
           onRemove={(s) => updateSkill("activeSkills", s, "remove")}
         />
