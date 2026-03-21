@@ -13,13 +13,13 @@ type Props = {
   palElements?: string[];
 };
 
-const TIER_STYLE: Record<PassiveEntry["tier"], React.CSSProperties> = {
-  platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", marginRight: 4 },
-  gold: { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", marginRight: 4 },
-  normal: {},
+const TIER_GLOW: Record<PassiveEntry["tier"], React.CSSProperties | null> = {
+  platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", fontSize: 13 },
+  gold: { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", fontSize: 13 },
+  normal: null,
 };
 
-const TIER_LABEL: Record<PassiveEntry["tier"], string> = {
+const TIER_SYMBOL: Record<PassiveEntry["tier"], string> = {
   platinum: "✦",
   gold: "★",
   normal: "",
@@ -43,16 +43,13 @@ export default function SkillSection({
   const getActiveElement = (name: string): string =>
     skillEntries?.find((e) => e.name === name)?.element ?? "neutral";
 
-  // build fixed-length slots array
   const slots: (string | null)[] = Array.from({ length: max }, (_, i) => skills[i] ?? null);
 
   const handleSlotChange = (slotIndex: number, newVal: string) => {
     const current = slots[slotIndex];
     if (newVal === "") {
-      // clear this slot
       if (current) onRemove(current);
     } else {
-      // swap: remove old if any, add new
       if (current) onRemove(current);
       onAdd(newVal);
     }
@@ -62,16 +59,14 @@ export default function SkillSection({
     const platinum = passiveEntries.filter((e) => e.tier === "platinum").sort((a, b) => a.name.localeCompare(b.name));
     const gold = passiveEntries.filter((e) => e.tier === "gold").sort((a, b) => a.name.localeCompare(b.name));
     const normal = passiveEntries.filter((e) => e.tier === "normal").sort((a, b) => a.name.localeCompare(b.name));
-
     const isDisabled = (name: string) => skills.includes(name) && name !== currentSlotValue;
-
     return (
       <>
-        <optgroup label="✦ Platinum">
-          {platinum.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>✦ {e.name}</option>)}
+        <optgroup label="Platinum">
+          {platinum.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
-        <optgroup label="★ Gold">
-          {gold.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>★ {e.name}</option>)}
+        <optgroup label="Gold">
+          {gold.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
         <optgroup label="Normal">
           {normal.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
@@ -93,12 +88,12 @@ export default function SkillSection({
     return (
       <>
         {nativeEntries.length > 0 && (
-          <optgroup label={`— ${palElements.map((e) => e.charAt(0).toUpperCase() + e.slice(1)).join(" / ")} (Native) —`}>
+          <optgroup label={`${palElements.map((e) => e.charAt(0).toUpperCase() + e.slice(1)).join(" / ")} (Native)`}>
             {nativeEntries.map((s) => <option key={s.name} value={s.name} disabled={isDisabled(s.name)}>{s.name}</option>)}
           </optgroup>
         )}
         {Object.entries(grouped).map(([el, entries]) => (
-          <optgroup key={el} label={`— ${el.charAt(0).toUpperCase() + el.slice(1)} —`}>
+          <optgroup key={el} label={el.charAt(0).toUpperCase() + el.slice(1)}>
             {entries.map((s) => <option key={s.name} value={s.name} disabled={isDisabled(s.name)}>{s.name}</option>)}
           </optgroup>
         ))}
@@ -120,30 +115,33 @@ export default function SkillSection({
       <div className={isPassive ? "skill-slots-grid" : "skill-slots-row"}>
         {slots.map((slotVal, i) => {
           const tier = isPassive && slotVal ? getPassiveTier(slotVal) : null;
+          const tierGlow = tier ? TIER_GLOW[tier] : null;
+          const tierSymbol = tier ? TIER_SYMBOL[tier] : "";
           const activeEl = !isPassive && slotVal ? getActiveElement(slotVal) : null;
 
           return (
             <div key={i} className={`skill-slot ${slotVal ? "skill-slot-filled" : "skill-slot-empty"}`}>
-              {/* filled slot header — icon + tier indicator */}
-              {slotVal && (
-                <div className="skill-slot-label">
-                  {activeEl && (
-                    <img src={elementIcon(activeEl)} alt={activeEl} className="skill-slot-icon" />
-                  )}
-                  {tier && tier !== "normal" && (
-                    <span style={TIER_STYLE[tier]}>{TIER_LABEL[tier]}</span>
-                  )}
-                </div>
-              )}
-
-              <select
-                className="skill-slot-select"
-                value={slotVal ?? ""}
-                onChange={(e) => handleSlotChange(i, e.target.value)}
-              >
-                <option value="">— None —</option>
-                {isPassive ? renderPassiveOptions(slotVal) : renderActiveOptions(slotVal)}
-              </select>
+              <div className="skill-slot-inner">
+                {/* icon strip: element icon OR tier glow symbol — only when slot is filled */}
+                {slotVal && (activeEl || (tier && tier !== "normal")) && (
+                  <div className="skill-slot-icon-wrap">
+                    {activeEl && (
+                      <img src={elementIcon(activeEl)} alt={activeEl} className="skill-slot-icon" />
+                    )}
+                    {tier && tier !== "normal" && tierGlow && (
+                      <span style={tierGlow}>{tierSymbol}</span>
+                    )}
+                  </div>
+                )}
+                <select
+                  className="skill-slot-select"
+                  value={slotVal ?? ""}
+                  onChange={(e) => handleSlotChange(i, e.target.value)}
+                >
+                  <option value="">— None —</option>
+                  {isPassive ? renderPassiveOptions(slotVal) : renderActiveOptions(slotVal)}
+                </select>
+              </div>
             </div>
           );
         })}
