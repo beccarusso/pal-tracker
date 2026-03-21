@@ -71,8 +71,10 @@ export default function App() {
 
   const setParent = (field: "parent1Id" | "parent2Id", value: ParentRef) => {
     if (!selectedPal) return;
+    // selecting wild locks both parents to wild
     if (value === "wild") return updatePal({ ...selectedPal, parent1Id: "wild", parent2Id: "wild" });
-    if (wildLocked && field === "parent2Id") return;
+    // changing either field away from wild — unlock both, set the changed field, clear the other
+    if (wildLocked) return updatePal({ ...selectedPal, parent1Id: field === "parent1Id" ? value : null, parent2Id: field === "parent2Id" ? value : null });
     updatePal({ ...selectedPal, [field]: value });
   };
 
@@ -165,7 +167,10 @@ export default function App() {
             source = await loadJSON<RawPal[]>("/data/my-pals.json");
           }
         }
-        const loaded = source.map((p) => normalizePal(p, fetchedSpecies, source));
+        const loaded = source.map((p) => {
+          const pal = normalizePal(p, fetchedSpecies, source);
+          return { ...pal, passiveSkills: pal.passiveSkills.slice(0, 4), activeSkills: pal.activeSkills.slice(0, 3) };
+        });
         setPals(loaded);
         setSavedIds(new Set(loaded.map((p) => p.id)));
       } catch (e) { console.error("Failed to load app data.", e); }

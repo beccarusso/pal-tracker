@@ -14,15 +14,15 @@ type Props = {
 };
 
 const TIER_GLOW: Record<PassiveEntry["tier"], React.CSSProperties | null> = {
-  platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", fontSize: 11, flexShrink: 0 },
-  gold:     { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", fontSize: 11, flexShrink: 0 },
+  platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", fontSize: 12, lineHeight: 1 },
+  gold:     { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", fontSize: 12, lineHeight: 1 },
   normal:   null,
 };
 
 const TIER_SYMBOL: Record<PassiveEntry["tier"], string> = {
   platinum: "✦",
-  gold:     "★",
-  normal:   "",
+  gold: "★",
+  normal: "",
 };
 
 export default function SkillSection({
@@ -43,7 +43,6 @@ export default function SkillSection({
     if (newVal === "") {
       if (current) onRemove(current);
     } else {
-      // pass old value so parent can do atomic swap in one updatePal call
       onAdd(newVal, current ?? undefined);
     }
   };
@@ -74,10 +73,7 @@ export default function SkillSection({
     const nativeEntries = skillEntries.filter((s) => native.has(s.element));
     const otherEntries  = skillEntries.filter((s) => !native.has(s.element));
     const grouped: Record<string, SkillEntry[]> = {};
-    otherEntries.forEach((s) => {
-      if (!grouped[s.element]) grouped[s.element] = [];
-      grouped[s.element].push(s);
-    });
+    otherEntries.forEach((s) => { if (!grouped[s.element]) grouped[s.element] = []; grouped[s.element].push(s); });
     return (
       <>
         {nativeEntries.length > 0 && (
@@ -111,32 +107,52 @@ export default function SkillSection({
           const tierGlow  = tier ? TIER_GLOW[tier] : null;
           const tierSym   = tier ? TIER_SYMBOL[tier] : "";
           const activeEl  = !isPassive && slotVal ? getActiveElement(slotVal) : null;
-          const showGlow  = tier && tier !== "normal" && tierGlow;
+          const label     = slotVal ?? "— None —";
 
           return (
             <div key={i} className={`skill-slot ${slotVal ? "skill-slot-filled" : "skill-slot-empty"}`}>
-              <div className="skill-slot-inner">
-                {/* element icon for active skills — sits flush left of the select text */}
-                {activeEl && (
-                  <img
-                    src={elementIcon(activeEl)}
-                    alt={activeEl}
-                    className="skill-slot-icon"
-                  />
+              {/* invisible duplicate text used purely to size the pill */}
+              <span className="skill-slot-sizer" aria-hidden="true">
+                {(activeEl || (tier && tier !== "normal")) && (
+                  <span style={{ display: "inline-block", width: 18 }} />
                 )}
-                {/* tier glow symbol for plat/gold passive skills */}
-                {showGlow && (
+                {label}
+
+              </span>
+
+              {/* visible content layer, absolutely positioned over sizer */}
+              <span className="skill-slot-inner">
+                {activeEl && (
+                  <img src={elementIcon(activeEl)} alt={activeEl} className="skill-slot-icon" />
+                )}
+                {tier && tier !== "normal" && tierGlow && (
                   <span style={tierGlow}>{tierSym}</span>
                 )}
-                <select
-                  className="skill-slot-select"
-                  value={slotVal ?? ""}
-                  onChange={(e) => handleSlotChange(i, e.target.value)}
+                <span className="skill-slot-text">{label}</span>
+              </span>
+
+              {/* native select overlaid invisibly for interaction */}
+              <select
+                className="skill-slot-select-overlay"
+                value={slotVal ?? ""}
+                onChange={(e) => handleSlotChange(i, e.target.value)}
+                title={label}
+              >
+                <option value="">— None —</option>
+                {isPassive ? renderPassiveOptions(slotVal) : renderActiveOptions(slotVal)}
+              </select>
+
+              {/* clear button — only shown on filled slots, visible on hover via CSS */}
+              {slotVal && (
+                <button
+                  type="button"
+                  className="skill-slot-clear"
+                  onClick={(e) => { e.stopPropagation(); onRemove(slotVal); }}
+                  title="Remove skill"
                 >
-                  <option value="">— None —</option>
-                  {isPassive ? renderPassiveOptions(slotVal) : renderActiveOptions(slotVal)}
-                </select>
-              </div>
+                  ×
+                </button>
+              )}
             </div>
           );
         })}

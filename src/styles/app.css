@@ -128,9 +128,7 @@ body {
   height: 100%;
   overflow: hidden;
 }
-.left-static {
-  flex-shrink: 0;
-}
+.left-static { flex-shrink: 0; }
 .list {
   display: flex;
   flex-direction: column;
@@ -145,12 +143,7 @@ body {
 .list::-webkit-scrollbar { width: 5px; }
 .list::-webkit-scrollbar-track { background: transparent; }
 .list::-webkit-scrollbar-thumb { background: #2a3754; border-radius: 999px; }
-.right {
-  width: 60%;
-  padding: 28px;
-  overflow-y: auto;
-  height: 100%;
-}
+.right { width: 60%; padding: 28px; overflow-y: auto; height: 100%; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; }
 .row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
 .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 24px; min-width: 0; }
@@ -174,7 +167,7 @@ body {
 .home-grid > * { flex: 1 1 300px; max-width: 360px; }
 .home-actions { min-height: 42px; margin-top: 14px; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
 
-/* ── Edit page hero ── */
+/* ── Edit page ── */
 .edit-topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
 .edit-topbar-left, .edit-topbar-right { display: flex; align-items: center; gap: 10px; }
 .edit-topbar-left { gap: 14px; }
@@ -202,12 +195,7 @@ body {
   user-select: none;
 }
 .mobile-pal-current-info { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
-.mobile-pal-chevron {
-  font-size: 14px;
-  color: var(--text-muted);
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
+.mobile-pal-chevron { font-size: 14px; color: var(--text-muted); transition: transform 0.2s ease; flex-shrink: 0; }
 .mobile-pal-chevron.open { transform: rotate(180deg); }
 .mobile-pal-dropdown {
   margin-top: 8px;
@@ -242,24 +230,18 @@ body {
 .warning-box { border: 1px solid #7f1d1d; background: #2a1115; color: #ffd2d2; }
 
 /* ── Skill Slots ── */
-.skill-slots-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  max-width: 760px;
-}
-.skill-slots-grid .skill-slot { flex: 1 1 140px; max-width: 210px; }
+.skill-slots-grid,
 .skill-slots-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   max-width: 760px;
 }
-.skill-slots-row .skill-slot { flex: 1 1 120px; max-width: 190px; }
+/* pill is position:relative so the overlay select can fill it */
 .skill-slot {
-  height: 44px;
-  min-width: 100px;
-  display: flex;
+  position: relative;
+  height: 38px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
@@ -270,32 +252,87 @@ body {
 }
 .skill-slot-filled { border-color: #4f66ff; background: #0e1a38; }
 .skill-slot-empty { border-color: var(--border); background: var(--panel); opacity: 0.7; }
+/* invisible text used only to size the pill width */
+.skill-slot-sizer {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+/* when filled, extra right space for the × button */
+.skill-slot-filled .skill-slot-sizer { padding-right: 30px; }
+/* visible label — nudged left a few px so it clears the × */
 .skill-slot-inner {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
+  padding: 0 12px;
+  pointer-events: none;
+}
+.skill-slot-filled .skill-slot-inner { padding-left: 15px; padding-right: 28px; }
+.skill-slot-text {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #fff;
+}
+.skill-slot-icon { width: 14px; height: 14px; object-fit: contain; flex-shrink: 0; }
+/* native select overlaid invisibly — covers full pill for click */
+.skill-slot-select-overlay {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  padding: 0 14px;
-  min-width: 0;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  background: transparent;
 }
-.skill-slot-icon-wrap { display: flex; align-items: center; flex-shrink: 0; }
-.skill-slot-icon { width: 15px; height: 15px; object-fit: contain; flex-shrink: 0; }
-.skill-slot-select {
-  flex: 1; min-width: 0;
-  background: transparent; border: none; color: #fff;
-  font-size: 12px; font-weight: 600; cursor: pointer; outline: none;
-  padding: 0; appearance: none; -webkit-appearance: none;
-  text-align: center;
-  text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+.skill-slot-select-overlay option,
+.skill-slot-select-overlay optgroup { background: #0b1530; color: #fff; }
+/* clear × button — hidden by default, shown on pill hover */
+.skill-slot-clear {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(99,120,255,0.5);
+  background: rgba(79,102,255,0.18);
+  color: #9aabff;
+  font-size: 13px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  z-index: 2;
 }
-.skill-slot-select option, .skill-slot-select optgroup { background: #0b1530; color: #fff; text-align: left; }
+.skill-slot:hover .skill-slot-clear { opacity: 1; }
+.skill-slot-clear:hover {
+  background: rgba(79,102,255,0.4);
+  border-color: #7c8cff;
+  color: #fff;
+}
 
 /* ════════════════════════════════════════
    TABLET  (≤ 768px)
 ════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* edit page: stack vertically, left becomes accordion */
   .page { flex-direction: column; height: auto; overflow: visible; }
   .left {
     width: 100%;
@@ -305,11 +342,9 @@ body {
     border-bottom: 1px solid #22304d;
     padding: 14px 16px;
   }
-  /* hide normal list, show mobile accordion */
   .list { display: none; }
   .mobile-pal-switcher { display: block; margin-top: 10px; }
   .right { width: 100%; padding: 16px; height: auto; }
-
   .h1-link { font-size: 32px; margin-bottom: 10px; }
   .edit-title { font-size: 28px; }
   .img-lg { width: 72px; height: 72px; }
@@ -317,8 +352,6 @@ body {
   .note-box, .warning-box { grid-column: 1 / 2; }
   .edit-topbar { gap: 10px; }
   .edit-topbar-right { flex-wrap: wrap; }
-
-  /* home */
   .home-page { padding: 24px 16px 40px; }
   .home-title { font-size: 36px; }
   .home-intro { font-size: 16px; }
@@ -358,8 +391,7 @@ body {
   .secondary-btn-sm { padding: 7px 12px; font-size: 13px; }
   .chip { padding: 6px 10px; font-size: 13px; }
   .section { margin-top: 20px; }
-  .skill-slots-grid .skill-slot { flex: 1 1 100px; max-width: 160px; }
-  .skill-slots-row .skill-slot { flex: 1 1 80px; max-width: 140px; }
-  .skill-slot { height: 40px; }
-  .skill-slot-select { font-size: 12px; }
+  .skill-slot { height: 34px; }
+  .skill-slot-text { font-size: 12px; }
+  .skill-slot-sizer { font-size: 12px; }
 }
