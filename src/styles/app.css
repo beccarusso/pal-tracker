@@ -1113,10 +1113,11 @@ body {
   flex-shrink: 0;
 }
 .work-icon-dot {
-  color: var(--text-muted);
-  font-size: 14px;
+  color: #fff;
+  font-size: 8px;
   line-height: 1;
-  margin-right: 1px;
+  margin-right: 2px;
+  opacity: 0.8;
 }
 .work-icon-wrap {
   display: inline-flex;

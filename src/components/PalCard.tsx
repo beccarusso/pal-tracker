@@ -72,7 +72,7 @@ export default function PalCard({
                   <span className="card-title-level">&nbsp;· Lv. {pal.level}</span>
                 </div>
                 <div className="work-suitability-icons">
-                  <span className="work-icon-dot">·</span>
+                  <span className="work-icon-dot">●</span>
                   {Object.entries(pal.workSuitability ?? {}).map(([skill, lvl]) => (
                     WORK_ICON[skill] ? (
                       <span key={skill} className="work-icon-wrap" title={`${skill} Lv.${lvl}`}>
