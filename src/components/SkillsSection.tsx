@@ -1,5 +1,5 @@
 import type { PassiveEntry, SkillEntry } from "../data/constants";
-import { passiveEntries } from "../data/constants";
+import { passiveEntries, ELEMENT_ORDER } from "../data/constants";
 import { elementIcon } from "../utils/helpers";
 
 type Props = {
@@ -43,10 +43,26 @@ export default function SkillSection({
   const getPassiveTier = (name: string): PassiveEntry["tier"] =>
     passiveEntries.find((e) => e.name === name)?.tier ?? "normal";
 
+  const getActiveElement = (name: string): string =>
+    skillEntries?.find((e) => e.name === name)?.element ?? "neutral";
+
+  // passives: sort by tier then alpha; actives: sort by element order (native first) then alpha
   const sortedSkills = options
     ? [...skills].sort((a, b) => {
         const tierDiff = TIER_ORDER[getPassiveTier(a)] - TIER_ORDER[getPassiveTier(b)];
         return tierDiff !== 0 ? tierDiff : a.localeCompare(b);
+      })
+    : skillEntries
+    ? [...skills].sort((a, b) => {
+        const elA = getActiveElement(a);
+        const elB = getActiveElement(b);
+        // native elements come first
+        const aNative = native.has(elA) ? 0 : 1;
+        const bNative = native.has(elB) ? 0 : 1;
+        if (aNative !== bNative) return aNative - bNative;
+        // within native or non-native, sort by element order then alpha
+        const elOrderDiff = ELEMENT_ORDER.indexOf(elA) - ELEMENT_ORDER.indexOf(elB);
+        return elOrderDiff !== 0 ? elOrderDiff : a.localeCompare(b);
       })
     : skills;
 
