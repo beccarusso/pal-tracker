@@ -5,7 +5,7 @@ import { elementIcon } from "../utils/helpers";
 type Props = {
   title: string;
   skills: string[];
-  onAdd: (skill: string) => void;
+  onAdd: (skill: string, replacing?: string) => void;
   onRemove: (skill: string) => void;
   max: number;
   options?: string[];
@@ -14,26 +14,19 @@ type Props = {
 };
 
 const TIER_GLOW: Record<PassiveEntry["tier"], React.CSSProperties | null> = {
-  platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", fontSize: 13 },
-  gold: { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", fontSize: 13 },
-  normal: null,
+  platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", fontSize: 11, flexShrink: 0 },
+  gold:     { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", fontSize: 11, flexShrink: 0 },
+  normal:   null,
 };
 
 const TIER_SYMBOL: Record<PassiveEntry["tier"], string> = {
   platinum: "✦",
-  gold: "★",
-  normal: "",
+  gold:     "★",
+  normal:   "",
 };
 
 export default function SkillSection({
-  title,
-  skills,
-  onAdd,
-  onRemove,
-  max,
-  options,
-  skillEntries,
-  palElements = [],
+  title, skills, onAdd, onRemove, max, options, skillEntries, palElements = [],
 }: Props) {
   const native = new Set(palElements.map((e) => e.toLowerCase()));
 
@@ -50,15 +43,15 @@ export default function SkillSection({
     if (newVal === "") {
       if (current) onRemove(current);
     } else {
-      if (current) onRemove(current);
-      onAdd(newVal);
+      // pass old value so parent can do atomic swap in one updatePal call
+      onAdd(newVal, current ?? undefined);
     }
   };
 
   const renderPassiveOptions = (currentSlotValue: string | null) => {
     const platinum = passiveEntries.filter((e) => e.tier === "platinum").sort((a, b) => a.name.localeCompare(b.name));
-    const gold = passiveEntries.filter((e) => e.tier === "gold").sort((a, b) => a.name.localeCompare(b.name));
-    const normal = passiveEntries.filter((e) => e.tier === "normal").sort((a, b) => a.name.localeCompare(b.name));
+    const gold     = passiveEntries.filter((e) => e.tier === "gold").sort((a, b) => a.name.localeCompare(b.name));
+    const normal   = passiveEntries.filter((e) => e.tier === "normal").sort((a, b) => a.name.localeCompare(b.name));
     const isDisabled = (name: string) => skills.includes(name) && name !== currentSlotValue;
     return (
       <>
@@ -79,7 +72,7 @@ export default function SkillSection({
     if (!skillEntries) return null;
     const isDisabled = (name: string) => skills.includes(name) && name !== currentSlotValue;
     const nativeEntries = skillEntries.filter((s) => native.has(s.element));
-    const otherEntries = skillEntries.filter((s) => !native.has(s.element));
+    const otherEntries  = skillEntries.filter((s) => !native.has(s.element));
     const grouped: Record<string, SkillEntry[]> = {};
     otherEntries.forEach((s) => {
       if (!grouped[s.element]) grouped[s.element] = [];
@@ -114,24 +107,26 @@ export default function SkillSection({
 
       <div className={isPassive ? "skill-slots-grid" : "skill-slots-row"}>
         {slots.map((slotVal, i) => {
-          const tier = isPassive && slotVal ? getPassiveTier(slotVal) : null;
-          const tierGlow = tier ? TIER_GLOW[tier] : null;
-          const tierSymbol = tier ? TIER_SYMBOL[tier] : "";
-          const activeEl = !isPassive && slotVal ? getActiveElement(slotVal) : null;
+          const tier      = isPassive && slotVal ? getPassiveTier(slotVal) : null;
+          const tierGlow  = tier ? TIER_GLOW[tier] : null;
+          const tierSym   = tier ? TIER_SYMBOL[tier] : "";
+          const activeEl  = !isPassive && slotVal ? getActiveElement(slotVal) : null;
+          const showGlow  = tier && tier !== "normal" && tierGlow;
 
           return (
             <div key={i} className={`skill-slot ${slotVal ? "skill-slot-filled" : "skill-slot-empty"}`}>
               <div className="skill-slot-inner">
-                {/* icon strip: element icon OR tier glow symbol — only when slot is filled */}
-                {slotVal && (activeEl || (tier && tier !== "normal")) && (
-                  <div className="skill-slot-icon-wrap">
-                    {activeEl && (
-                      <img src={elementIcon(activeEl)} alt={activeEl} className="skill-slot-icon" />
-                    )}
-                    {tier && tier !== "normal" && tierGlow && (
-                      <span style={tierGlow}>{tierSymbol}</span>
-                    )}
-                  </div>
+                {/* element icon for active skills — sits flush left of the select text */}
+                {activeEl && (
+                  <img
+                    src={elementIcon(activeEl)}
+                    alt={activeEl}
+                    className="skill-slot-icon"
+                  />
+                )}
+                {/* tier glow symbol for plat/gold passive skills */}
+                {showGlow && (
+                  <span style={tierGlow}>{tierSym}</span>
                 )}
                 <select
                   className="skill-slot-select"

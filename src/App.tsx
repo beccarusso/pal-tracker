@@ -121,12 +121,16 @@ export default function App() {
     setDirtyIds((prev) => { const next = new Set(prev); next.delete(deadId); return next; });
   };
 
-  const updateSkill = (field: "passiveSkills" | "activeSkills", skill: string, action: "add" | "remove") => {
+  const updateSkill = (field: "passiveSkills" | "activeSkills", skill: string, action: "add" | "remove", replacing?: string) => {
     if (!selectedPal) return;
     const current = selectedPal[field];
-    const next = action === "add"
-      ? current.includes(skill) ? current : [...current, skill]
-      : current.filter((s) => s !== skill);
+    let next: string[];
+    if (action === "add") {
+      const without = replacing ? current.filter((s) => s !== replacing) : current;
+      next = without.includes(skill) ? without : [...without, skill];
+    } else {
+      next = current.filter((s) => s !== skill);
+    }
     updatePal({ ...selectedPal, [field]: next });
   };
 
@@ -345,13 +349,13 @@ export default function App() {
 
         <SkillSection
           title="Passive Skills" options={passiveOptions} skills={selectedPal.passiveSkills} max={4}
-          onAdd={(s) => updateSkill("passiveSkills", s, "add")}
+          onAdd={(s, r) => updateSkill("passiveSkills", s, "add", r)}
           onRemove={(s) => updateSkill("passiveSkills", s, "remove")}
         />
         <SkillSection
           title="Active Skills" skillEntries={getSortedActiveSkills(selectedPal.element)}
           palElements={selectedPal.element} skills={selectedPal.activeSkills} max={3}
-          onAdd={(s) => updateSkill("activeSkills", s, "add")}
+          onAdd={(s, r) => updateSkill("activeSkills", s, "add", r)}
           onRemove={(s) => updateSkill("activeSkills", s, "remove")}
         />
       </div>
