@@ -10,6 +10,8 @@ import { supabase } from "./lib/supabase";
 import { loadPals, savePals as savePalsToDb } from "./lib/db";
 import type { User } from "@supabase/supabase-js";
 
+const SESSION_KEY = "pal-tracker:selectedPalId";
+
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -17,9 +19,22 @@ export default function App() {
   const [pals, setPals] = useState<Pal[]>([]);
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
   const [dirtyIds, setDirtyIds] = useState<Set<number>>(new Set());
-  const [selectedPalId, setSelectedPalId] = useState<number | null>(null);
+  const [selectedPalId, _setSelectedPalId] = useState<number | null>(() => {
+    const stored = sessionStorage.getItem(SESSION_KEY);
+    return stored ? Number(stored) : null;
+  });
   const [hoveredPalId, setHoveredPalId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+
+  // wrap setter so it always syncs to sessionStorage
+  const setSelectedPalId = (id: number | null) => {
+    _setSelectedPalId(id);
+    if (id === null) sessionStorage.removeItem(SESSION_KEY);
+    else sessionStorage.setItem(SESSION_KEY, String(id));
+  };
+
+  // cast for PalCard which expects Dispatch<SetStateAction<number | null>>
+  const selectPalId = setSelectedPalId as React.Dispatch<React.SetStateAction<number | null>>;
 
   const selectedPal = pals.find((p) => p.id === selectedPalId) ?? null;
   const isSaved = selectedPalId !== null && savedIds.has(selectedPalId) && !dirtyIds.has(selectedPalId);
@@ -107,7 +122,6 @@ export default function App() {
     setDirtyIds((prev) => { const next = new Set(prev); next.delete(deadId); return next; });
   };
 
-  // auto-saves after skill add/remove
   const updateSkill = (field: "passiveSkills" | "activeSkills", skill: string, action: "add" | "remove") => {
     if (!selectedPal || !user) return;
     const updated: Pal = {
@@ -118,7 +132,6 @@ export default function App() {
     };
     const nextPals = pals.map((p) => (p.id === updated.id ? updated : p));
     setPals(nextPals);
-    // auto-save immediately
     savePalsToDb(user.id, nextPals).then(() => {
       setSavedIds(new Set(nextPals.map((p) => p.id)));
       setDirtyIds((prev) => { const next = new Set(prev); next.delete(selectedPal.id); return next; });
@@ -159,7 +172,7 @@ export default function App() {
         const loaded = source.map((p) => normalizePal(p, fetchedSpecies, source));
         setPals(loaded);
         setSavedIds(new Set(loaded.map((p) => p.id)));
-        setSelectedPalId(null);
+        // don't reset selectedPalId here — let sessionStorage value persist
       } catch (e) { console.error("Failed to load app data.", e); }
     })();
   }, [user, authLoading]);
@@ -206,7 +219,7 @@ export default function App() {
         {filteredPals.length ? (
           <div className="home-grid">
             {filteredPals.map((pal) => (
-              <PalCard key={pal.id} pal={pal} home hovered={hoveredPalId === pal.id} onHover={setHoveredPalId} onSelect={setSelectedPalId} onToggleFavorite={toggleFavorite} />
+              <PalCard key={pal.id} pal={pal} home hovered={hoveredPalId === pal.id} onHover={setHoveredPalId} onSelect={selectPalId} onToggleFavorite={toggleFavorite} />
             ))}
           </div>
         ) : (
@@ -228,7 +241,7 @@ export default function App() {
         <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pals, species, or element" style={{ marginBottom: 18 }} />
         <div className="list">
           {filteredPals.map((pal) => (
-            <PalCard key={pal.id} pal={pal} selected={selectedPalId === pal.id} hovered={hoveredPalId === pal.id} onHover={setHoveredPalId} onSelect={setSelectedPalId} onToggleFavorite={toggleFavorite} />
+            <PalCard key={pal.id} pal={pal} selected={selectedPalId === pal.id} hovered={hoveredPalId === pal.id} onHover={setHoveredPalId} onSelect={selectPalId} onToggleFavorite={toggleFavorite} />
           ))}
           {!filteredPals.length && <div className="card"><span className="plain">No pals match your search.</span></div>}
         </div>
