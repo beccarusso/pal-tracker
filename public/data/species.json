@@ -1,108 +1,2012 @@
 [
-  { "species": "Lamball", "element": ["neutral"] },
-  { "species": "Cattiva", "element": ["neutral"] },
-  { "species": "Chikipi", "element": ["neutral"] },
-  { "species": "Lifmunk", "element": ["grass"] },
-  { "species": "Foxparks", "element": ["fire"] },
-  { "species": "Fuack", "element": ["water"] },
-  { "species": "Sparkit", "element": ["electric"] },
-  { "species": "Tanzee", "element": ["grass"] },
-  { "species": "Rooby", "element": ["fire"] },
-  { "species": "Pengullet", "element": ["water", "ice"] },
-  { "species": "Penking", "element": ["water", "ice"] },
-  { "species": "Jolthog", "element": ["electric"] },
-  { "species": "Jolthog Cryst", "element": ["ice"] },
-  { "species": "Gumoss", "element": ["grass", "ground"] },
-  { "species": "Vixy", "element": ["neutral"] },
-  { "species": "Hoocrates", "element": ["dark"] },
-  { "species": "Teafant", "element": ["water"] },
-  { "species": "Mau", "element": ["dark"] },
-  { "species": "Mau Cryst", "element": ["ice"] },
-  { "species": "Daedream", "element": ["dark"] },
-  { "species": "Rushoar", "element": ["ground"] },
-  { "species": "Nox", "element": ["dark"] },
-  { "species": "Cremis", "element": ["neutral"] },
-  { "species": "Flopie", "element": ["grass"] },
-  { "species": "Kelpsea", "element": ["water"] },
-  { "species": "Kelpsea Ignis", "element": ["fire"] },
-  { "species": "Killamari", "element": ["dark"] },
-  { "species": "Mossanda", "element": ["grass"] },
-  { "species": "Mossanda Lux", "element": ["electric"] },
-  { "species": "Woolipop", "element": ["neutral"] },
-  { "species": "Caprity", "element": ["grass"] },
-  { "species": "Melpaca", "element": ["neutral"] },
-  { "species": "Eikthyrdeer", "element": ["neutral"] },
-  { "species": "Eikthyrdeer Terra", "element": ["ground"] },
-  { "species": "Hangyu", "element": ["ground"] },
-  { "species": "Hangyu Cryst", "element": ["ice"] },
-  { "species": "Tombat", "element": ["dark"] },
-  { "species": "Lovander", "element": ["neutral"] },
-  { "species": "Depresso", "element": ["dark"] },
-  { "species": "Cinnamoth", "element": ["grass"] },
-  { "species": "Arsox", "element": ["fire"] },
-  { "species": "Dumud", "element": ["water", "ground"] },
-  { "species": "Dumud Ignis", "element": ["fire", "ground"] },
-  { "species": "Kingpaca", "element": ["neutral"] },
-  { "species": "Kingpaca Cryst", "element": ["ice"] },
-  { "species": "Celaray", "element": ["water"] },
-  { "species": "Robinquill", "element": ["grass"] },
-  { "species": "Robinquill Terra", "element": ["ground"] },
-  { "species": "Gobfin", "element": ["water"] },
-  { "species": "Gobfin Ignis", "element": ["fire"] },
-  { "species": "Relaxaurus", "element": ["dragon", "water"] },
-  { "species": "Relaxaurus Lux", "element": ["dragon", "electric"] },
-  { "species": "Broncherry", "element": ["grass"] },
-  { "species": "Broncherry Aqua", "element": ["grass", "water"] },
-  { "species": "Petallia", "element": ["grass"] },
-  { "species": "Reindrix", "element": ["ice"] },
-  { "species": "Rayhound", "element": ["electric"] },
-  { "species": "Kitsun", "element": ["fire"] },
-  { "species": "Dazzi", "element": ["electric"] },
-  { "species": "Lunaris", "element": ["neutral"] },
-  { "species": "Dinossom", "element": ["grass", "dragon"] },
-  { "species": "Dinossom Lux", "element": ["electric", "dragon"] },
-  { "species": "Surfent", "element": ["water"] },
-  { "species": "Surfent Terra", "element": ["ground"] },
-  { "species": "Maraith", "element": ["dark"] },
-  { "species": "Digtoise", "element": ["ground"] },
-  { "species": "Tocotoco", "element": ["neutral"] },
-  { "species": "Fuddler", "element": ["ground"] },
-  { "species": "Elizabee", "element": ["neutral"] },
-  { "species": "Warsect", "element": ["grass", "ground"] },
-  { "species": "Verdash", "element": ["grass"] },
-  { "species": "Vaelet", "element": ["grass"] },
-  { "species": "Sibelyx", "element": ["ice"] },
-  { "species": "Elphidran", "element": ["dragon"] },
-  { "species": "Elphidran Aqua", "element": ["water", "dragon"] },
-  { "species": "Kelpsea", "element": ["water"] },
-  { "species": "Azurobe", "element": ["water", "dragon"] },
-  { "species": "Cryolinx", "element": ["ice"] },
-  { "species": "Blazehowl", "element": ["fire"] },
-  { "species": "Blazehowl Noct", "element": ["dark"] },
-  { "species": "Ragnahawk", "element": ["fire"] },
-  { "species": "Katress", "element": ["dark"] },
-  { "species": "Wixen", "element": ["fire"] },
-  { "species": "Warsect", "element": ["grass", "ground"] },
-  { "species": "Mammorest", "element": ["grass", "ground"] },
-  { "species": "Mammorest Cryst", "element": ["ice", "ground"] },
-  { "species": "Vanwyrm", "element": ["fire", "dark"] },
-  { "species": "Vanwyrm Cryst", "element": ["ice", "dark"] },
-  { "species": "Bushi", "element": ["fire"] },
-  { "species": "Anubis", "element": ["ground"] },
-  { "species": "Felbat", "element": ["dark"] },
-  { "species": "Quivern", "element": ["dragon"] },
-  { "species": "Suzaku", "element": ["fire"] },
-  { "species": "Suzaku Aqua", "element": ["water"] },
-  { "species": "Jormuntide", "element": ["water", "dragon"] },
-  { "species": "Jormuntide Ignis", "element": ["fire", "dragon"] },
-  { "species": "Beakon", "element": ["electric"] },
-  { "species": "Helzephyr", "element": ["dark"] },
-  { "species": "Astegon", "element": ["dark", "dragon"] },
-  { "species": "Menasting", "element": ["dark", "ground"] },
-  { "species": "Orserk", "element": ["dragon", "electric"] },
-  { "species": "Shadowbeak", "element": ["dark"] },
-  { "species": "Paladius", "element": ["neutral"] },
-  { "species": "Necromus", "element": ["dark"] },
-  { "species": "Frostallion", "element": ["ice"] },
-  { "species": "Frostallion Noct", "element": ["dark"] }
+  {
+    "species": "Lamball",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "transporting": 1,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Cattiva",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "gathering": 1,
+      "mining": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Chikipi",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Lifmunk",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 1,
+      "handiwork": 1,
+      "gathering": 1,
+      "lumbering": 1,
+      "medicine": 1
+    }
+  },
+  {
+    "species": "Foxparks",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 1
+    }
+  },
+  {
+    "species": "Fuack",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 1,
+      "handiwork": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Sparkit",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 1,
+      "handiwork": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Tanzee",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 1,
+      "handiwork": 1,
+      "gathering": 1,
+      "lumbering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Rooby",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 1
+    }
+  },
+  {
+    "species": "Pengullet",
+    "element": [
+      "water",
+      "ice"
+    ],
+    "workSuitability": {
+      "watering": 1,
+      "handiwork": 1,
+      "cooling": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Penking",
+    "element": [
+      "water",
+      "ice"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "handiwork": 2,
+      "mining": 2,
+      "cooling": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Jolthog",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 1
+    }
+  },
+  {
+    "species": "Jolthog Cryst",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "cooling": 1
+    }
+  },
+  {
+    "species": "Gumoss",
+    "element": [
+      "grass",
+      "ground"
+    ],
+    "workSuitability": {
+      "planting": 1
+    }
+  },
+  {
+    "species": "Vixy",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Hoocrates",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Teafant",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 1
+    }
+  },
+  {
+    "species": "Depresso",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "mining": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Cremis",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Daedream",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "gathering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Rushoar",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "mining": 1
+    }
+  },
+  {
+    "species": "Nox",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Fuddler",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "mining": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Killamari",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Mau",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "farming": 1
+    }
+  },
+  {
+    "species": "Mau Cryst",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "cooling": 1,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Celaray",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Direhowl",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Tocotoco",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Flopie",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 1,
+      "handiwork": 1,
+      "gathering": 1,
+      "medicine": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Mozzarina",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "farming": 1
+    }
+  },
+  {
+    "species": "Bristla",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 1,
+      "handiwork": 1,
+      "gathering": 1,
+      "medicine": 2,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Gobfin",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "handiwork": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Gobfin Ignis",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 2,
+      "handiwork": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Hangyu",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "gathering": 1,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Hangyu Cryst",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "gathering": 1,
+      "cooling": 1,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Mossanda",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "handiwork": 2,
+      "lumbering": 2,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Mossanda Lux",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 2,
+      "handiwork": 2,
+      "lumbering": 2,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Woolipop",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "farming": 1
+    }
+  },
+  {
+    "species": "Caprity",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Melpaca",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "farming": 1
+    }
+  },
+  {
+    "species": "Eikthyrdeer",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Eikthyrdeer Terra",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Nitewing",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 2
+    }
+  },
+  {
+    "species": "Ribbuny",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "gathering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Incineram",
+    "element": [
+      "fire",
+      "dark"
+    ],
+    "workSuitability": {
+      "kindling": 1,
+      "handiwork": 2,
+      "mining": 1,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Incineram Noct",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "mining": 1,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Cinnamoth",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "medicine": 1
+    }
+  },
+  {
+    "species": "Arsox",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 2,
+      "lumbering": 1
+    }
+  },
+  {
+    "species": "Dumud",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "watering": 1,
+      "mining": 2,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Cawgnito",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "lumbering": 1
+    }
+  },
+  {
+    "species": "Leezpunk",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "gathering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Leezpunk Ignis",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 1,
+      "handiwork": 1,
+      "gathering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Loupmoon",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 2
+    }
+  },
+  {
+    "species": "Galeclaw",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 2
+    }
+  },
+  {
+    "species": "Robinquill",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 1,
+      "handiwork": 2,
+      "gathering": 2,
+      "lumbering": 1,
+      "medicine": 1,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Robinquill Terra",
+    "element": [
+      "grass",
+      "ground"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "gathering": 2,
+      "lumbering": 1,
+      "medicine": 1,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Gorirat",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "lumbering": 2,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Beegarde",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 1,
+      "handiwork": 1,
+      "gathering": 1,
+      "lumbering": 1,
+      "medicine": 1,
+      "transporting": 2,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Elizabee",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "handiwork": 2,
+      "gathering": 2,
+      "lumbering": 1,
+      "medicine": 2
+    }
+  },
+  {
+    "species": "Grintale",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 2
+    }
+  },
+  {
+    "species": "Swee",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "cooling": 1
+    }
+  },
+  {
+    "species": "Sweepa",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "gathering": 2,
+      "cooling": 2
+    }
+  },
+  {
+    "species": "Chillet",
+    "element": [
+      "ice",
+      "dragon"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "cooling": 1
+    }
+  },
+  {
+    "species": "Univolt",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 2,
+      "lumbering": 1
+    }
+  },
+  {
+    "species": "Foxcicle",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "cooling": 2
+    }
+  },
+  {
+    "species": "Pyrin",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 2,
+      "lumbering": 1
+    }
+  },
+  {
+    "species": "Pyrin Noct",
+    "element": [
+      "fire",
+      "dark"
+    ],
+    "workSuitability": {
+      "kindling": 2,
+      "lumbering": 1
+    }
+  },
+  {
+    "species": "Reindrix",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "lumbering": 2,
+      "cooling": 2
+    }
+  },
+  {
+    "species": "Rayhound",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 2
+    }
+  },
+  {
+    "species": "Kitsun",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 2
+    }
+  },
+  {
+    "species": "Dazzi",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 1,
+      "handiwork": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Lunaris",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "handiwork": 3,
+      "gathering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Dinossom",
+    "element": [
+      "grass",
+      "dragon"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Dinossom Lux",
+    "element": [
+      "electric",
+      "dragon"
+    ],
+    "workSuitability": {
+      "electricity": 2,
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Surfent",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 2
+    }
+  },
+  {
+    "species": "Surfent Terra",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Maraith",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 2,
+      "mining": 1
+    }
+  },
+  {
+    "species": "Digtoise",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "mining": 3
+    }
+  },
+  {
+    "species": "Tombat",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 2,
+      "mining": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Lovander",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "mining": 1,
+      "medicine": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Flambelle",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 1,
+      "handiwork": 1,
+      "transporting": 1,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Vanwyrm",
+    "element": [
+      "fire",
+      "dark"
+    ],
+    "workSuitability": {
+      "kindling": 1,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Vanwyrm Cryst",
+    "element": [
+      "ice",
+      "dark"
+    ],
+    "workSuitability": {
+      "cooling": 2,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Bushi",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 2,
+      "handiwork": 1,
+      "gathering": 1,
+      "lumbering": 3,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Beakon",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 2,
+      "gathering": 1,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Ragnahawk",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Katress",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "medicine": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Wixen",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 2,
+      "handiwork": 3,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Verdash",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "handiwork": 3,
+      "gathering": 3,
+      "lumbering": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Vaelet",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "handiwork": 2,
+      "gathering": 2,
+      "medicine": 3,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Sibelyx",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "medicine": 2,
+      "cooling": 2,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Elphidran",
+    "element": [
+      "dragon"
+    ],
+    "workSuitability": {
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Elphidran Aqua",
+    "element": [
+      "dragon",
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 3,
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Kelpsea",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 1
+    }
+  },
+  {
+    "species": "Kelpsea Ignis",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 1
+    }
+  },
+  {
+    "species": "Azurobe",
+    "element": [
+      "water",
+      "dragon"
+    ],
+    "workSuitability": {
+      "watering": 3
+    }
+  },
+  {
+    "species": "Cryolinx",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "lumbering": 2,
+      "cooling": 3
+    }
+  },
+  {
+    "species": "Blazehowl",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Blazehowl Noct",
+    "element": [
+      "fire",
+      "dark"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Relaxaurus",
+    "element": [
+      "dragon",
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Relaxaurus Lux",
+    "element": [
+      "dragon",
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 3,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Broncherry",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 3
+    }
+  },
+  {
+    "species": "Broncherry Aqua",
+    "element": [
+      "grass",
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 3
+    }
+  },
+  {
+    "species": "Petallia",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 3,
+      "handiwork": 2,
+      "gathering": 2,
+      "medicine": 2,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Reptyro",
+    "element": [
+      "fire",
+      "ground"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "mining": 3
+    }
+  },
+  {
+    "species": "Reptyro Cryst",
+    "element": [
+      "ice",
+      "ground"
+    ],
+    "workSuitability": {
+      "mining": 3,
+      "cooling": 3
+    }
+  },
+  {
+    "species": "Kingpaca",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Kingpaca Cryst",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "cooling": 3
+    }
+  },
+  {
+    "species": "Mammorest",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "lumbering": 2,
+      "mining": 2
+    }
+  },
+  {
+    "species": "Mammorest Cryst",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "lumbering": 2,
+      "mining": 2,
+      "cooling": 2
+    }
+  },
+  {
+    "species": "Wumpo",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "lumbering": 3,
+      "cooling": 2,
+      "transporting": 4
+    }
+  },
+  {
+    "species": "Wumpo Botan",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 1,
+      "handiwork": 2,
+      "lumbering": 3,
+      "transporting": 4
+    }
+  },
+  {
+    "species": "Warsect",
+    "element": [
+      "grass",
+      "ground"
+    ],
+    "workSuitability": {
+      "planting": 1,
+      "handiwork": 1,
+      "lumbering": 3,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Fenglope",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Felbat",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "medicine": 3
+    }
+  },
+  {
+    "species": "Quivern",
+    "element": [
+      "dragon"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "gathering": 2,
+      "mining": 2,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Blazamut",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "mining": 4
+    }
+  },
+  {
+    "species": "Helzephyr",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Astegon",
+    "element": [
+      "dragon",
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 1,
+      "mining": 4
+    }
+  },
+  {
+    "species": "Menasting",
+    "element": [
+      "dark",
+      "ground"
+    ],
+    "workSuitability": {
+      "lumbering": 2,
+      "mining": 3
+    }
+  },
+  {
+    "species": "Anubis",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "handiwork": 4,
+      "mining": 3,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Jormuntide",
+    "element": [
+      "dragon",
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 4
+    }
+  },
+  {
+    "species": "Jormuntide Ignis",
+    "element": [
+      "dragon",
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 4
+    }
+  },
+  {
+    "species": "Suzaku",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 3
+    }
+  },
+  {
+    "species": "Suzaku Aqua",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 3
+    }
+  },
+  {
+    "species": "Grizzbolt",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 3,
+      "handiwork": 2,
+      "lumbering": 2,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Lyleen",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 4,
+      "handiwork": 3,
+      "gathering": 2,
+      "medicine": 3
+    }
+  },
+  {
+    "species": "Lyleen Noct",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 3,
+      "gathering": 2,
+      "medicine": 3
+    }
+  },
+  {
+    "species": "Faleris",
+    "element": [
+      "fire"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Orserk",
+    "element": [
+      "dragon",
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 4,
+      "handiwork": 2,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Shadowbeak",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Paladius",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "lumbering": 2,
+      "mining": 2
+    }
+  },
+  {
+    "species": "Necromus",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "lumbering": 2,
+      "mining": 2
+    }
+  },
+  {
+    "species": "Frostallion",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "cooling": 4
+    }
+  },
+  {
+    "species": "Frostallion Noct",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 4
+    }
+  },
+  {
+    "species": "Jetragon",
+    "element": [
+      "dragon"
+    ],
+    "workSuitability": {
+      "gathering": 3
+    }
+  },
+  {
+    "species": "Bellanoir",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "medicine": 4,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Bellanoir Libero",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "medicine": 4,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Selyne",
+    "element": [
+      "dark",
+      "neutral"
+    ],
+    "workSuitability": {
+      "handiwork": 4,
+      "medicine": 3,
+      "transporting": 3
+    }
+  },
+  {
+    "species": "Croajiro",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 1,
+      "handiwork": 1,
+      "gathering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Croajiro Noct",
+    "element": [
+      "water",
+      "dark"
+    ],
+    "workSuitability": {
+      "watering": 1,
+      "handiwork": 1,
+      "gathering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Lullu",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "handiwork": 2,
+      "gathering": 1,
+      "medicine": 2
+    }
+  },
+  {
+    "species": "Shroomer",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "handiwork": 1,
+      "gathering": 2,
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Shroomer Noct",
+    "element": [
+      "grass",
+      "dark"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "handiwork": 1,
+      "gathering": 2,
+      "lumbering": 2
+    }
+  },
+  {
+    "species": "Kikit",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "mining": 1
+    }
+  },
+  {
+    "species": "Sootseer",
+    "element": [
+      "fire",
+      "dark"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "handiwork": 2,
+      "gathering": 1,
+      "mining": 2,
+      "farming": 1
+    }
+  },
+  {
+    "species": "Prixter",
+    "element": [
+      "ground",
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "lumbering": 3,
+      "medicine": 1
+    }
+  },
+  {
+    "species": "Knocklem",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "gathering": 3,
+      "mining": 4,
+      "transporting": 4
+    }
+  },
+  {
+    "species": "Yakumo",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 2
+    }
+  },
+  {
+    "species": "Dogen",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "handiwork": 3,
+      "gathering": 2,
+      "lumbering": 2,
+      "medicine": 1,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Dazemu",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "gathering": 2
+    }
+  },
+  {
+    "species": "Mimog",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Xenovader",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "lumbering": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Xenogard",
+    "element": [
+      "dragon"
+    ],
+    "workSuitability": {
+      "mining": 3
+    }
+  },
+  {
+    "species": "Xenolord",
+    "element": [
+      "dark",
+      "dragon"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Nitemary",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 3,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Starryon",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 2
+    }
+  },
+  {
+    "species": "Silvegis",
+    "element": [
+      "dragon"
+    ],
+    "workSuitability": {
+      "lumbering": 3
+    }
+  },
+  {
+    "species": "Smokie",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 2
+    }
+  },
+  {
+    "species": "Celesdir",
+    "element": [
+      "neutral"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "lumbering": 4
+    }
+  },
+  {
+    "species": "Omascul",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Splatterina",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 4,
+      "lumbering": 1,
+      "medicine": 3,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Tarantriss",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "gathering": 2,
+      "medicine": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Azurmane",
+    "element": [
+      "electric"
+    ],
+    "workSuitability": {
+      "electricity": 4,
+      "gathering": 1
+    }
+  },
+  {
+    "species": "Bastigor",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "lumbering": 3,
+      "mining": 3,
+      "cooling": 4
+    }
+  },
+  {
+    "species": "Prunelia",
+    "element": [
+      "grass",
+      "dark"
+    ],
+    "workSuitability": {
+      "planting": 3,
+      "handiwork": 1,
+      "gathering": 2,
+      "medicine": 3,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Nyafia",
+    "element": [
+      "dark"
+    ],
+    "workSuitability": {
+      "handiwork": 3,
+      "gathering": 2,
+      "lumbering": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Gildane",
+    "element": [
+      "ground"
+    ],
+    "workSuitability": {
+      "gathering": 2
+    }
+  },
+  {
+    "species": "Herbil",
+    "element": [
+      "grass",
+      "neutral"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "gathering": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Icelyn",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "handiwork": 2,
+      "medicine": 2,
+      "cooling": 3,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Frostplume",
+    "element": [
+      "ice"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "cooling": 2
+    }
+  },
+  {
+    "species": "Palumba",
+    "element": [
+      "grass"
+    ],
+    "workSuitability": {
+      "planting": 2,
+      "gathering": 2,
+      "mining": 3
+    }
+  },
+  {
+    "species": "Braloha",
+    "element": [
+      "grass",
+      "ground"
+    ],
+    "workSuitability": {
+      "planting": 4,
+      "gathering": 4,
+      "mining": 2
+    }
+  },
+  {
+    "species": "Munchill",
+    "element": [
+      "water",
+      "ice"
+    ],
+    "workSuitability": {
+      "watering": 1,
+      "cooling": 2,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Polapup",
+    "element": [
+      "water",
+      "ice"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "cooling": 3
+    }
+  },
+  {
+    "species": "Turtacle",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "mining": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Turtacle Terra",
+    "element": [
+      "water",
+      "ground"
+    ],
+    "workSuitability": {
+      "planting": 4,
+      "mining": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Jellroy",
+    "element": [
+      "water",
+      "dark"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "handiwork": 1,
+      "medicine": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Jelliette",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "handiwork": 1,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Gloopie",
+    "element": [
+      "water",
+      "dark"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "handiwork": 2,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Finsider",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 2,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Finsider Ignis",
+    "element": [
+      "fire",
+      "water"
+    ],
+    "workSuitability": {
+      "kindling": 2,
+      "watering": 2,
+      "transporting": 1
+    }
+  },
+  {
+    "species": "Ghangler",
+    "element": [
+      "water",
+      "dark"
+    ],
+    "workSuitability": {
+      "watering": 4,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Ghangler Ignis",
+    "element": [
+      "fire",
+      "water"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "watering": 4,
+      "transporting": 2
+    }
+  },
+  {
+    "species": "Whalaska",
+    "element": [
+      "water",
+      "ice"
+    ],
+    "workSuitability": {
+      "watering": 3,
+      "cooling": 4
+    }
+  },
+  {
+    "species": "Whalaska Ignis",
+    "element": [
+      "fire",
+      "ice"
+    ],
+    "workSuitability": {
+      "kindling": 3,
+      "cooling": 4
+    }
+  },
+  {
+    "species": "Neptilius",
+    "element": [
+      "water"
+    ],
+    "workSuitability": {
+      "watering": 4
+    }
+  }
 ]

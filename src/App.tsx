@@ -5,7 +5,7 @@ import PalCard from "./components/PalCard";
 import ParentSelect from "./components/ParentSelect";
 import SkillSection from "./components/SkillsSection";
 import FamilyTree from "./components/FamilyTree";
-import { EMPTY_STATE_IMAGE, getSortedActiveSkills, passiveOptions, WILD_IMAGE } from "./data/constants";
+import { EMPTY_STATE_IMAGE, getSortedActiveSkills, passiveOptions, WILD_IMAGE, passiveEntries } from "./data/constants";
 import { buildChildMap, elementIcon, getParentWarnings, imgError, imgPath, loadJSON, normalizePal, sortPals, titleOf, type RawPal, type SpeciesData } from "./utils/helpers";
 import { supabase } from "./lib/supabase";
 import { loadPals, savePals as savePalsToDb } from "./lib/db";
@@ -395,7 +395,7 @@ export default function App() {
                 <h1 className="edit-title">
                   <span className="edit-title-name">{titleOf(selectedPal)}</span>
                   {selectedPal.gender && (
-                    <span className={`gender-symbol ${selectedPal.gender === "male" ? "gender-male" : "gender-female"}`}>
+                    <span className={`gender-badge ${selectedPal.gender === "male" ? "gender-badge-male" : "gender-badge-female"}`} style={{ width: 22, height: 22, fontSize: 13 }}>
                       {selectedPal.gender === "male" ? "♂" : "♀"}
                     </span>
                   )}
@@ -437,7 +437,9 @@ export default function App() {
             <span className="required-indicator">!</span> Required fields must be filled before saving.
           </div>
         )}
-        <div className="grid">
+        {/* parent preview sidebar — appears to right of grid when parents selected */}
+        <div className="parent-preview-row">
+          <div className="grid">
           <label htmlFor="pal-name">Name</label>
           <input id="pal-name" className="input" value={selectedPal.name} onChange={(e) => change("name", e.target.value)} />
 
@@ -492,7 +494,35 @@ export default function App() {
 
           <label htmlFor="pal-notes">Notes</label>
           <textarea id="pal-notes" className="input" value={selectedPal.notes} onChange={(e) => change("notes", e.target.value)} style={{ minHeight: 100, resize: "vertical" }} />
-        </div>
+          </div>{/* end grid */}
+          {/* preview sidebar */}
+          <div className="parent-preview-sidebar">
+            {[selectedPal.parent1Id, selectedPal.parent2Id].map((ref, i) => {
+              const previewPal = typeof ref === "number" ? palById.get(ref) : null;
+              if (!previewPal) return null;
+              return (
+                <div key={i} className="parent-preview-bubble parent-preview-bubble-stacked">
+                  <div className="parent-preview-header">
+                    <img src={imgPath(previewPal.species)} alt={previewPal.species} className="parent-preview-img" onError={imgError} />
+                    <div>
+                      <div className="parent-preview-name">{titleOf(previewPal)}</div>
+                      <div className="parent-preview-sub">Passive Skills</div>
+                    </div>
+                  </div>
+                  <div className="parent-preview-skills">
+                    {previewPal.passiveSkills.length > 0
+                      ? previewPal.passiveSkills.map((s) => {
+                          const tier = passiveEntries.find((e) => e.name === s)?.tier ?? "normal";
+                          return <div key={s} className={`parent-preview-skill${tier !== "normal" ? ` tier-${tier}` : ""}`}>{s}</div>;
+                        })
+                      : <div className="parent-preview-skill" style={{ color: "var(--text-muted)" }}>No passive skills</div>
+                    }
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>{/* end parent-preview-row */}
 
         <SkillSection title="Passive Skills" options={passiveOptions} skills={selectedPal.passiveSkills} max={4}
           onAdd={(s, r) => updateSkill("passiveSkills", s, "add", r)}

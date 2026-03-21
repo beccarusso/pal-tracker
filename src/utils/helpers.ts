@@ -1,7 +1,7 @@
 import type { SyntheticEvent } from "react";
 import type { Pal, ParentRef } from "../types";
 
-export type SpeciesData = { species: string; element: string[] };
+export type SpeciesData = { species: string; element: string[]; workSuitability?: Record<string, number> };
 export type RawPal = Partial<Pal> & { parent1?: string; parent2?: string };
 
 export const FALLBACK_IMAGE =
@@ -148,6 +148,7 @@ export const normalizePal = (
         : match?.element ?? ["neutral"],
     level: typeof raw.level === "number" ? raw.level : 1,
     gender: raw.gender ?? null,
+    workSuitability: match?.workSuitability ?? raw.workSuitability ?? {},
     passiveSkills: Array.isArray(raw.passiveSkills) ? raw.passiveSkills : [],
     activeSkills: Array.isArray(raw.activeSkills) ? raw.activeSkills : [],
     parent1Id: bothWild ? "wild" : p1,

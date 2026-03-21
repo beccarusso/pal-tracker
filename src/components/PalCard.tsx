@@ -1,6 +1,23 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { Pal } from "../types";
 import { elementIcon, imgError, imgPath, titleOf } from "../utils/helpers";
+import { passiveEntries } from "../data/constants";
+
+// maps species data key → icon filename
+const WORK_ICON: Record<string, string> = {
+  kindling:     "kindling",
+  watering:     "watering",
+  planting:     "planting",
+  electricity:  "electricity",
+  handiwork:    "handiwork",
+  gathering:    "gathering",
+  lumbering:    "lumbering",
+  mining:       "mining",
+  medicine:     "medicine",
+  cooling:      "cooling",
+  transporting: "transporting",
+  farming:      "farming",
+};
 
 type PalCardProps = {
   pal: Pal;
@@ -54,13 +71,43 @@ export default function PalCard({
                   )}
                   <span className="card-title-level">&nbsp;· Lv. {pal.level}</span>
                 </div>
-                <div className="element-icons">
-                  {pal.element?.map((el) => (
-                    <img key={el} src={elementIcon(el)} alt={el} title={el} className="element-icon" onError={imgError} />
+                <div className="work-suitability-icons">
+                  <span className="work-icon-dot">·</span>
+                  {Object.entries(pal.workSuitability ?? {}).map(([skill, lvl]) => (
+                    WORK_ICON[skill] ? (
+                      <span key={skill} className="work-icon-wrap" title={`${skill} Lv.${lvl}`}>
+                        <img src={`/images/work/${WORK_ICON[skill]}.png`} alt={skill} className="work-icon" onError={imgError} />
+                        <span className="work-icon-lvl">{lvl}</span>
+                      </span>
+                    ) : null
                   ))}
                 </div>
               </div>
-              <div className={`${p}meta`}>{pal.species}</div>
+              <div className={`${p}meta`} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <span>{pal.species}</span>
+                {pal.element?.map((el) => (
+                  <img key={el} src={elementIcon(el)} alt={el} title={el} className="element-icon" onError={imgError} />
+                ))}
+              </div>
+            {pal.passiveSkills.length > 0 && (
+              <div className="card-skill-chips">
+                {[...pal.passiveSkills]
+                  .sort((a, b) => {
+                    const order = { platinum: 0, gold: 1, normal: 2, negative: 3 };
+                    const ta = order[passiveEntries.find((e) => e.name === a)?.tier ?? "normal"];
+                    const tb = order[passiveEntries.find((e) => e.name === b)?.tier ?? "normal"];
+                    return ta - tb;
+                  })
+                  .map((s) => {
+                    const tier = passiveEntries.find((e) => e.name === s)?.tier ?? "normal";
+                    return (
+                      <span key={s} className={`card-skill-chip${tier !== "normal" ? ` tier-${tier}` : ""}`}>
+                        {s}
+                      </span>
+                    );
+                  })}
+              </div>
+            )}
             </div>
           )}
         </div>

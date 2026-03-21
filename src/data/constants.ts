@@ -3,10 +3,8 @@ export const WILD_IMAGE = "/images/ui/wild.png";
 export const EMPTY_STATE_IMAGE = "/images/ui/flopie-friends.png";
 
 export type SkillEntry = { name: string; element: string };
-export type PassiveEntry = { name: string; tier: "platinum" | "gold" | "normal" };
+export type PassiveEntry = { name: string; tier: "platinum" | "gold" | "normal" | "negative" };
 
-// All 92 pal passive skills with tier indicators
-// tier 4 = platinum, tier 3 = gold, tier 1/2 = normal
 export const passiveEntries: PassiveEntry[] = [
   // ── Platinum (tier 4) ──
   { name: "Diamond Body", tier: "platinum" },
@@ -44,7 +42,6 @@ export const passiveEntries: PassiveEntry[] = [
   { name: "Lord of the Underworld", tier: "gold" },
   { name: "Mine Foreman", tier: "gold" },
   { name: "Motivational Leader", tier: "gold" },
-  { name: "Musclehead", tier: "gold" },
   { name: "Noble", tier: "gold" },
   { name: "Philanthropist", tier: "gold" },
   { name: "Runner", tier: "gold" },
@@ -56,58 +53,60 @@ export const passiveEntries: PassiveEntry[] = [
 
   // ── Normal (tier 1/2) ──
   { name: "Abnormal", tier: "normal" },
-  { name: "Aggressive", tier: "normal" },
   { name: "Blood of the Dragon", tier: "normal" },
   { name: "Botanical Barrier", tier: "normal" },
-  { name: "Bottomless Stomach", tier: "normal" },
   { name: "Brave", tier: "normal" },
-  { name: "Brittle", tier: "normal" },
   { name: "Capacitor", tier: "normal" },
   { name: "Cheery", tier: "normal" },
-  { name: "Clumsy", tier: "normal" },
   { name: "Coldblooded", tier: "normal" },
-  { name: "Conceited", tier: "normal" },
-  { name: "Coward", tier: "normal" },
   { name: "Dainty Eater", tier: "normal" },
-  { name: "Destructive", tier: "normal" },
-  { name: "Downtrodden", tier: "normal" },
   { name: "Dragonkiller", tier: "normal" },
-  { name: "Easygoing", tier: "normal" },
   { name: "Earthquake Resistant", tier: "normal" },
   { name: "Fine Furs", tier: "normal" },
   { name: "Fit as a Fiddle", tier: "normal" },
   { name: "Fragrant Foliage", tier: "normal" },
-  { name: "Glutton", tier: "normal" },
   { name: "Hard Skin", tier: "normal" },
   { name: "Heated Body", tier: "normal" },
-  { name: "Hooligan", tier: "normal" },
   { name: "Hydromaniac", tier: "normal" },
   { name: "Impatient", tier: "normal" },
   { name: "Insulated Body", tier: "normal" },
-  { name: "Masochist", tier: "normal" },
   { name: "Mercy Hit", tier: "normal" },
   { name: "Nimble", tier: "normal" },
   { name: "Nocturnal", tier: "normal" },
   { name: "Otherworldly Cells", tier: "normal" },
-  { name: "Pacifist", tier: "normal" },
   { name: "Positive Thinker", tier: "normal" },
   { name: "Power of Gaia", tier: "normal" },
   { name: "Pyromaniac", tier: "normal" },
-  { name: "Sadist", tier: "normal" },
   { name: "Serious", tier: "normal" },
-  { name: "Shabby", tier: "normal" },
-  { name: "Sickly", tier: "normal" },
-  { name: "Slacker", tier: "normal" },
   { name: "Sleek Stroke", tier: "normal" },
   { name: "Suntan Lover", tier: "normal" },
-  { name: "Unstable", tier: "normal" },
   { name: "Veil of Darkness", tier: "normal" },
   { name: "Waterproof", tier: "normal" },
-  { name: "Work Slave", tier: "normal" },
   { name: "Zen Mind", tier: "normal" },
+
+  // ── Negative ──
+  { name: "Aggressive", tier: "negative" },
+  { name: "Bottomless Stomach", tier: "negative" },
+  { name: "Brittle", tier: "negative" },
+  { name: "Clumsy", tier: "negative" },
+  { name: "Conceited", tier: "negative" },
+  { name: "Coward", tier: "negative" },
+  { name: "Destructive", tier: "negative" },
+  { name: "Downtrodden", tier: "negative" },
+  { name: "Easygoing", tier: "negative" },
+  { name: "Glutton", tier: "negative" },
+  { name: "Hooligan", tier: "negative" },
+  { name: "Masochist", tier: "negative" },
+  { name: "Musclehead", tier: "negative" },
+  { name: "Pacifist", tier: "negative" },
+  { name: "Sadist", tier: "negative" },
+  { name: "Shabby", tier: "negative" },
+  { name: "Sickly", tier: "negative" },
+  { name: "Slacker", tier: "negative" },
+  { name: "Unstable", tier: "negative" },
+  { name: "Work Slave", tier: "negative" },
 ];
 
-// Plain sorted list for backwards compat (platinum first, gold second, normal alpha)
 export const passiveOptions: string[] = passiveEntries.map((e) => e.name);
 
 export const activeSkills: SkillEntry[] = [
@@ -211,19 +210,12 @@ export const ELEMENT_ORDER = [
 
 export function getSortedActiveSkills(palElements: string[]): SkillEntry[] {
   const native = new Set(palElements.map((e) => e.toLowerCase()));
-
-  const nativeSkills = activeSkills
-    .filter((s) => native.has(s.element))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  const otherSkills = activeSkills
-    .filter((s) => !native.has(s.element))
-    .sort((a, b) => {
-      const elA = ELEMENT_ORDER.indexOf(a.element);
-      const elB = ELEMENT_ORDER.indexOf(b.element);
-      if (elA !== elB) return elA - elB;
-      return a.name.localeCompare(b.name);
-    });
-
+  const nativeSkills = activeSkills.filter((s) => native.has(s.element)).sort((a, b) => a.name.localeCompare(b.name));
+  const otherSkills = activeSkills.filter((s) => !native.has(s.element)).sort((a, b) => {
+    const elA = ELEMENT_ORDER.indexOf(a.element);
+    const elB = ELEMENT_ORDER.indexOf(b.element);
+    if (elA !== elB) return elA - elB;
+    return a.name.localeCompare(b.name);
+  });
   return [...nativeSkills, ...otherSkills];
 }

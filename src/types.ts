@@ -12,6 +12,7 @@ export type Pal = {
   parent1Id: ParentRef;
   parent2Id: ParentRef;
   notes: string;
+  workSuitability?: Record<string, number>;
   favorite: boolean;
   favoriteOrder: number | null;
 };

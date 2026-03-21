@@ -42,7 +42,7 @@ body {
   transition: all 0.16s ease;
 }
 .card { padding: 16px; border-radius: 18px; min-width: 0; }
-.home-card { padding: 18px; padding-bottom: 48px; border-radius: 22px; box-shadow: 0 10px 24px rgba(0,0,0,0.18); }
+.home-card { padding: 18px; padding-bottom: 80px; border-radius: 22px; box-shadow: 0 10px 24px rgba(0,0,0,0.18); }
 .is-highlighted {
   border: 2px solid #7c8cff;
   background: var(--panel-2);
@@ -111,7 +111,7 @@ body {
 /* ── Input / Form ── */
 .input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-2); background: var(--panel); color: #fff; }
 .input.is-disabled { opacity: 0.5; cursor: not-allowed; }
-.grid { display: grid; grid-template-columns: 140px 1fr; gap: 14px; align-items: center; max-width: 760px; }
+.grid { display: grid; grid-template-columns: 140px 1fr; gap: 14px; align-items: center; width: 560px; flex-shrink: 0; }
 
 /* ── Layout (desktop) ── */
 .page {
@@ -256,6 +256,7 @@ body {
   overflow: hidden;
 }
 .skill-slot-filled { border-color: #4f66ff; background: #0e1a38; }
+.skill-slot-negative { border-color: #f87171; background: #1f0a0a; }
 .skill-slot-empty { border-color: var(--border); background: var(--panel); opacity: 0.7; }
 /* invisible text used only to size the pill width */
 .skill-slot-sizer {
@@ -471,6 +472,7 @@ body {
   display: flex;
   justify-content: center;
   overflow-x: auto;
+  overflow-y: visible;
   padding: 20px 0 40px;
 }
 .ft-tree-wrap {
@@ -492,6 +494,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 .ft-parents-row {
   display: flex;
@@ -544,13 +547,16 @@ body {
   min-width: 110px;
   max-width: 140px;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease, z-index 0s;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 .ft-node:hover {
   border-color: #7c8cff;
   background: var(--panel-2);
   transform: scale(1.04);
+  z-index: 100;
 }
 .ft-node-root {
   border-color: #ff50c0;
@@ -793,7 +799,7 @@ body {
 .pencil-indicator {
   position: absolute;
   top: 10px;
-  right: 76px;
+  right: 79px;
   width: 28px;
   height: 28px;
   border-radius: 999px;
@@ -929,4 +935,205 @@ body {
 .trash-btn:hover {
   background: rgba(239,68,68,0.28);
   border-color: #f87171;
+}
+
+/* ── Parent passive skills preview bubble ── */
+.parent-preview-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 1000px;
+}
+.parent-preview-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 232px;
+  min-width: 200px;
+  max-width: 210px;
+}
+.parent-preview-bubble {
+  width: 210px;
+  background: var(--panel-2);
+  border: 1px solid #4f66ff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(79,102,255,0.15);
+  animation: slideIn 0.18s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.parent-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.parent-preview-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #4f66ff;
+  background: #0a1326;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.parent-preview-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+.parent-preview-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+.parent-preview-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.parent-preview-skill {
+  font-size: 12px;
+  color: var(--text-soft);
+  padding: 4px 8px;
+  background: rgba(79,102,255,0.1);
+  border: 1px solid rgba(79,102,255,0.2);
+  border-radius: 6px;
+}
+.parent-preview-skill.tier-platinum {
+  color: #7fffd4;
+  border-color: rgba(127,255,212,0.3);
+  background: rgba(127,255,212,0.07);
+  text-shadow: 0 0 6px rgba(127,255,212,0.4);
+}
+.parent-preview-skill.tier-gold {
+  color: #ffa500;
+  border-color: rgba(255,165,0,0.3);
+  background: rgba(255,165,0,0.07);
+  text-shadow: 0 0 6px rgba(255,165,0,0.4);
+}
+.parent-preview-skill.tier-negative {
+  color: #f87171;
+  border-color: rgba(248,113,113,0.3);
+  background: rgba(248,113,113,0.07);
+  text-shadow: 0 0 6px rgba(248,113,113,0.4);
+}
+
+/* ── Family tree children row ── */
+.ft-children-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* ── Skills bubble on tree node hover ── */
+.ft-skills-bubble {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 200px;
+  background: var(--panel-2);
+  border: 1px solid #4f66ff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  z-index: 20;
+  pointer-events: none;
+  animation: fadeIn 0.15s ease;
+}
+.ft-skills-bubble-right,
+.ft-skills-bubble-left {
+  left: calc(100% + 12px);
+  right: auto;
+}
+
+/* ── Passive skill chips on pal cards ── */
+.card-skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+.card-skill-chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(79,102,255,0.35);
+  background: rgba(79,102,255,0.1);
+  color: var(--text-soft);
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-skill-chip.tier-platinum {
+  color: #7fffd4;
+  border-color: rgba(127,255,212,0.35);
+  background: rgba(127,255,212,0.07);
+}
+.card-skill-chip.tier-gold {
+  color: #ffa500;
+  border-color: rgba(255,165,0,0.35);
+  background: rgba(255,165,0,0.07);
+}
+.card-skill-chip.tier-negative {
+  color: #f87171;
+  border-color: rgba(248,113,113,0.35);
+  background: rgba(248,113,113,0.07);
+}
+/* collection card view: 2x2 grid bottom left */
+.home-card .card-skill-chips {
+  position: absolute;
+  bottom: 46px;
+  left: 18px;
+  right: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+/* edit pal left panel card: 4 in a row */
+.card .card-skill-chips {
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 6px;
+}
+
+/* ── Work Suitability Icons ── */
+.work-suitability-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+.work-icon-dot {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1;
+  margin-right: 1px;
+}
+.work-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.work-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+.work-icon-lvl {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1;
 }

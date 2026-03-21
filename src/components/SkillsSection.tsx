@@ -17,12 +17,14 @@ const TIER_GLOW: Record<PassiveEntry["tier"], React.CSSProperties | null> = {
   platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", fontSize: 12, lineHeight: 1 },
   gold:     { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", fontSize: 12, lineHeight: 1 },
   normal:   null,
+  negative: { color: "#f87171", textShadow: "0 0 6px #f87171, 0 0 12px #ef4444", fontSize: 12, lineHeight: 1 },
 };
 
 const TIER_SYMBOL: Record<PassiveEntry["tier"], string> = {
   platinum: "✦",
   gold: "★",
   normal: "",
+  negative: "▼",
 };
 
 export default function SkillSection({
@@ -52,16 +54,20 @@ export default function SkillSection({
     const gold     = passiveEntries.filter((e) => e.tier === "gold").sort((a, b) => a.name.localeCompare(b.name));
     const normal   = passiveEntries.filter((e) => e.tier === "normal").sort((a, b) => a.name.localeCompare(b.name));
     const isDisabled = (name: string) => skills.includes(name) && name !== currentSlotValue;
+    const negative = passiveEntries.filter((e) => e.tier === "negative").sort((a, b) => a.name.localeCompare(b.name));
     return (
       <>
-        <optgroup label="Platinum">
+        <optgroup label="✦ Platinum">
           {platinum.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
-        <optgroup label="Gold">
+        <optgroup label="★ Gold">
           {gold.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
         <optgroup label="Normal">
           {normal.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
+        </optgroup>
+        <optgroup label="⚠ Negative">
+          {negative.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
       </>
     );
@@ -110,7 +116,7 @@ export default function SkillSection({
           const label     = slotVal ?? "— None —";
 
           return (
-            <div key={i} className={`skill-slot ${slotVal ? "skill-slot-filled" : "skill-slot-empty"}`}>
+            <div key={i} className={`skill-slot ${slotVal ? (tier === "negative" ? "skill-slot-filled skill-slot-negative" : "skill-slot-filled") : "skill-slot-empty"}`}>
               {/* invisible duplicate text used purely to size the pill */}
               <span className="skill-slot-sizer" aria-hidden="true">
                 {(activeEl || (tier && tier !== "normal")) && (
