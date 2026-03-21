@@ -7,62 +7,132 @@ type PalCardProps = {
   home?: boolean;
   selected?: boolean;
   hovered?: boolean;
+  gridView?: boolean;
   onHover: Dispatch<SetStateAction<number | null>>;
   onSelect: Dispatch<SetStateAction<number | null>>;
   onToggleFavorite: (id: number) => void;
+  onOpenTree?: (id: number) => void;
+  onDelete?: (id: number) => void;
 };
 
-export default function PalCard({ pal, home = false, selected = false, hovered = false, onHover, onSelect, onToggleFavorite }: PalCardProps) {
+const GENDER_SYMBOL = {
+  male:   { symbol: "♂", cls: "gender-badge-male" },
+  female: { symbol: "♀", cls: "gender-badge-female" },
+};
+
+export default function PalCard({
+  pal, home = false, selected = false, hovered = false, gridView = false,
+  onHover, onSelect, onToggleFavorite, onOpenTree, onDelete,
+}: PalCardProps) {
   const p = home ? "home-" : "";
   const active = selected || hovered;
+  const gender = pal.gender ? GENDER_SYMBOL[pal.gender] : null;
 
   return (
     <div
       className={`${p}card${active ? " is-highlighted" : ""}`}
       onMouseEnter={() => onHover(pal.id)}
       onMouseLeave={() => onHover(null)}
-      onClick={() => onSelect(pal.id)}
-      role="button" tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onSelect(pal.id); }}
+      onClick={() => !home && onSelect(pal.id)}
+      style={{ cursor: home ? "default" : "pointer" }}
     >
+      <div className={`${p}card-inner`}>
+        <div className={`${p}card-main`}>
+          <img
+            src={imgPath(pal.species)}
+            alt={pal.species}
+            className={home ? "img-home" : "img-sm"}
+            onError={imgError}
+          />
+          {!gridView && (
+            <div className={`${p}card-text`}>
+              <div className={`${p}card-title-row`}>
+                <div className={`${p}card-title`}>
+                  <span className="card-title-name">{titleOf(pal)}</span>
+                  {gender && (
+                    <span className={`gender-badge ${gender.cls}`}>{gender.symbol}</span>
+                  )}
+                  <span className="card-title-level">&nbsp;· Lv. {pal.level}</span>
+                </div>
+                <div className="element-icons">
+                  {pal.element?.map((el) => (
+                    <img key={el} src={elementIcon(el)} alt={el} title={el} className="element-icon" onError={imgError} />
+                  ))}
+                </div>
+              </div>
+              <div className={`${p}meta`}>{pal.species}</div>
+            </div>
+          )}
+        </div>
+
+        {/* grid view: name/level below image */}
+        {gridView && (
+          <>
+            <div className="element-icons-grid">
+              {pal.element?.map((el) => (
+                <img key={el} src={elementIcon(el)} alt={el} title={el} className="element-icon" onError={imgError} />
+              ))}
+            </div>
+            <div className="home-card-text" style={{ textAlign: "center" }}>
+              <div className="home-card-title-row" style={{ justifyContent: "center" }}>
+                <div className="home-card-title">
+                  <span className="card-title-name">{titleOf(pal)}</span>
+                  {gender && <span className={`gender-badge ${gender.cls}`}>{gender.symbol}</span>}
+                </div>
+              </div>
+              <div className="home-meta">Lv. {pal.level} · {pal.species}</div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* edit button on home/collection cards — hover only, bottom left */}
+      {home && (
+        <div className={active ? "visible-button-wrap" : "hidden-button-wrap"}>
+          <button className="secondary-btn-sm" onClick={(e) => { e.stopPropagation(); onSelect(pal.id); }}>Edit</button>
+        </div>
+      )}
+
+      {/* pencil indicator on edit page — show on hover of non-selected cards */}
+      {!home && !selected && hovered && (
+        <div className="pencil-indicator">✏️</div>
+      )}
+
+      {/* trash button — always visible on edit page cards */}
+      {!home && onDelete && (
+        <div className="trash-corner">
+          <button
+            className="trash-btn"
+            onClick={(e) => { e.stopPropagation(); onDelete(pal.id); }}
+            title="Delete pal"
+          >
+            🗑
+          </button>
+        </div>
+      )}
+
+      {/* favorite star */}
       <div className={home ? "favorite-corner-home" : "favorite-corner"}>
         <button
-          className={`favorite-btn${home ? " favorite-btn-home" : ""}${pal.favorite ? " active" : ""}`}
+          className={`favorite-btn ${home ? "favorite-btn-home" : ""} ${pal.favorite ? "active" : ""}`}
           onClick={(e) => { e.stopPropagation(); onToggleFavorite(pal.id); }}
         >
           {pal.favorite ? "★" : "☆"}
         </button>
       </div>
 
-      <div className={`${p}card-inner`}>
-        <div className={`${p}card-main`}>
-          <img src={imgPath(pal.species)} alt={pal.species} className={home ? "img-home" : "img-sm"} onError={imgError} />
-          <div className={`${p}card-text`}>
-            <div className={`${p}card-title-row`}>
-              <div className={`${p}card-title`}>
-                <span className="card-title-name">{titleOf(pal)}</span>
-                <span className="card-title-level">&nbsp;· Lv. {pal.level}</span>
-              </div>
-              <div className="element-icons">
-                {pal.element.map((el) => (
-                  <img key={el} src={elementIcon(el)} alt={el} title={el} className="element-icon" onError={imgError} />
-                ))}
-              </div>
-            </div>
-            <div className={`${p}meta`}>{pal.species}</div>
-          </div>
+      {/* heart tree button */}
+      {onOpenTree && (
+        <div className={home ? "tree-corner-home" : "tree-corner"}>
+          <button
+            className="tree-btn-card"
+            onClick={(e) => { e.stopPropagation(); onOpenTree(pal.id); }}
+            title="View family tree"
+          >
+            ❤️
+          </button>
         </div>
-
-        {!home && (
-          <div className={active ? "visible-button-wrap" : "hidden-button-wrap"}>
-            {!selected && (
-              <button className="secondary-btn-sm" onClick={(e) => { e.stopPropagation(); onSelect(pal.id); }}>
-                Edit
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ export type Pal = {
   species: string;
   element: string[];
   level: number;
+  gender: "male" | "female" | null;
   passiveSkills: string[];
   activeSkills: string[];
   parent1Id: ParentRef;

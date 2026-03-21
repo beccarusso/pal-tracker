@@ -147,6 +147,7 @@ export const normalizePal = (
         ? raw.element
         : match?.element ?? ["neutral"],
     level: typeof raw.level === "number" ? raw.level : 1,
+    gender: raw.gender ?? null,
     passiveSkills: Array.isArray(raw.passiveSkills) ? raw.passiveSkills : [],
     activeSkills: Array.isArray(raw.activeSkills) ? raw.activeSkills : [],
     parent1Id: bothWild ? "wild" : p1,
@@ -174,5 +175,5 @@ export const sortPals = (pals: Pal[]) =>
     })
     .map(({ pal }) => pal);
 
-    export const elementIcon = (element: string) =>
+export const elementIcon = (element: string) =>
   `/images/elements/${element.toLowerCase()}-icon.png`;
