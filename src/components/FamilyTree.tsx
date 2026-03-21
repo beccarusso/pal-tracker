@@ -144,7 +144,7 @@ function Node({ node, onReroot, isRoot, positionHint = "center" }: NodeProps) {
         onClick={() => !isRoot && onReroot(pal.id)}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        title={isRoot ? titleOf(pal) : `Re-root on ${titleOf(pal)}`}
+        
       >
         <img src={imgPath(pal.species)} alt={pal.species} className="ft-node-img" onError={imgError} />
         <div className="ft-node-info">
