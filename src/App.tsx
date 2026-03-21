@@ -122,18 +122,12 @@ export default function App() {
   };
 
   const updateSkill = (field: "passiveSkills" | "activeSkills", skill: string, action: "add" | "remove") => {
-    if (!selectedPal || !user) return;
+    if (!selectedPal) return;
     const current = selectedPal[field];
     const next = action === "add"
       ? current.includes(skill) ? current : [...current, skill]
       : current.filter((s) => s !== skill);
-    const updated: Pal = { ...selectedPal, [field]: next };
-    const nextPals = pals.map((p) => (p.id === updated.id ? updated : p));
-    setPals(nextPals);
-    savePalsToDb(user.id, nextPals).then(() => {
-      setSavedIds(new Set(nextPals.map((p) => p.id)));
-      setDirtyIds((prev) => { const d = new Set(prev); d.delete(selectedPal.id); return d; });
-    }).catch((e) => console.warn("Failed to auto-save skills.", e));
+    updatePal({ ...selectedPal, [field]: next });
   };
 
   const getParentInfo = (ref: ParentRef) => ({
