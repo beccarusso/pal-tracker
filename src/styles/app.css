@@ -138,8 +138,7 @@ body {
   overflow-y: auto;
   flex: 1;
   min-width: 0;
-  padding-right: 6px;
-  padding-bottom: 16px;
+  padding: 4px 8px 16px 4px;
   scrollbar-width: thin;
   scrollbar-color: #2a3754 transparent;
 }
@@ -244,17 +243,22 @@ body {
 
 /* ── Skill Slots ── */
 .skill-slots-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 140px);
-  gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 760px;
 }
+.skill-slots-grid .skill-slot { flex: 1 1 140px; max-width: 210px; }
 .skill-slots-row {
-  display: grid;
-  grid-template-columns: repeat(3, 120px);
-  gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 760px;
 }
+.skill-slots-row .skill-slot { flex: 1 1 120px; max-width: 190px; }
 .skill-slot {
   height: 44px;
+  min-width: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -354,8 +358,8 @@ body {
   .secondary-btn-sm { padding: 7px 12px; font-size: 13px; }
   .chip { padding: 6px 10px; font-size: 13px; }
   .section { margin-top: 20px; }
-  .skill-slots-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .skill-slots-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .skill-slots-grid .skill-slot { flex: 1 1 100px; max-width: 160px; }
+  .skill-slots-row .skill-slot { flex: 1 1 80px; max-width: 140px; }
   .skill-slot { height: 40px; }
   .skill-slot-select { font-size: 12px; }
 }
