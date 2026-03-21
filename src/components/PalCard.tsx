@@ -71,8 +71,8 @@ export default function PalCard({
                   )}
                   <span className="card-title-level">&nbsp;· Lv. {pal.level}</span>
                 </div>
-                <div className="work-suitability-icons">
-                  <span className="work-icon-dot">●</span>
+                <div className={`work-suitability-icons${home ? "" : " work-icons-with-dot"}`}>
+                  {!home && <span className="work-icon-dot">●</span>}
                   {Object.entries(pal.workSuitability ?? {}).map(([skill, lvl]) => (
                     WORK_ICON[skill] ? (
                       <span key={skill} className="work-icon-wrap" title={`${skill} Lv.${lvl}`}>
@@ -176,7 +176,7 @@ export default function PalCard({
             onClick={(e) => { e.stopPropagation(); onOpenTree(pal.id); }}
             title="View family tree"
           >
-            ❤️
+            🌳
           </button>
         </div>
       )}

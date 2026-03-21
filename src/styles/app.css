@@ -41,7 +41,7 @@ body {
   background: var(--panel);
   transition: all 0.16s ease;
 }
-.card { padding: 16px; border-radius: 18px; min-width: 0; }
+.card { padding: 16px; border-radius: 18px; min-width: 0; container-type: inline-size; }
 .home-card { padding: 18px; padding-bottom: 80px; border-radius: 22px; box-shadow: 0 10px 24px rgba(0,0,0,0.18); }
 .is-highlighted {
   border: 2px solid #7c8cff;
@@ -53,7 +53,7 @@ body {
 .card-inner, .home-card-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .card-main, .home-card-main { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
 .card-text, .home-card-text { flex: 1; min-width: 0; text-align: left; }
-.card-title-row, .home-card-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; margin-bottom: 6px; min-width: 0; }
+.card-title-row, .home-card-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; min-width: 0; }
 .card-title, .home-card-title { display: inline-flex; align-items: baseline; gap: 4px; font-weight: 700; line-height: 1.1; white-space: nowrap; min-width: 0; }
 .card-title { font-size: 22px; }
 .home-card-title { font-size: 24px; overflow: hidden; }
@@ -70,12 +70,12 @@ body {
 }
 .favorite-btn-home { width: 28px; height: 28px; font-size: 15px; }
 .favorite-btn.active { background: #2a2340; border-color: #8a6b18; box-shadow: 0 0 0 1px rgba(255,215,95,0.12); }
-.favorite-btn:hover { transform: scale(1.1); transition: transform 0.12s ease; }
+.favorite-btn:hover { transform: scale(1.1); background: rgba(255,215,95,0.15); border-color: rgba(255,215,95,0.6); filter: drop-shadow(0 0 6px rgba(255,215,95,0.7)); transition: transform 0.12s ease, filter 0.15s ease, background 0.15s ease, border-color 0.15s ease; }
 .favorite-corner { position: absolute; top: 10px; right: 10px; z-index: 2; }
 .favorite-corner-home { position: absolute; bottom: 10px; right: 12px; z-index: 2; }
 
 /* ── Edit button wrap ── */
-.hidden-button-wrap, .visible-button-wrap { position: absolute; bottom: 10px; left: 12px; transition: opacity 0.14s ease; }
+.hidden-button-wrap, .visible-button-wrap { position: absolute; top: 10px; right: 10px; transition: opacity 0.14s ease; }
 .hidden-button-wrap { visibility: hidden; opacity: 0; pointer-events: none; }
 .visible-button-wrap { visibility: visible; opacity: 1; pointer-events: auto; }
 .hidden-button-wrap .secondary-btn-sm,
@@ -111,7 +111,7 @@ body {
 /* ── Input / Form ── */
 .input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-2); background: var(--panel); color: #fff; }
 .input.is-disabled { opacity: 0.5; cursor: not-allowed; }
-.grid { display: grid; grid-template-columns: 140px 1fr; gap: 14px; align-items: center; width: 560px; flex-shrink: 0; }
+.grid { display: grid; grid-template-columns: 140px 1fr; gap: 14px; align-items: center; width: 560px; flex-shrink: 1; min-width: 0; }
 
 /* ── Layout (desktop) ── */
 .page {
@@ -256,7 +256,7 @@ body {
   overflow: hidden;
 }
 .skill-slot-filled { border-color: #4f66ff; background: #0e1a38; }
-.skill-slot-negative { border-color: #f87171; background: #1f0a0a; }
+.skill-slot-negative { border-color: var(--border-2); background: var(--panel); }
 .skill-slot-empty { border-color: var(--border); background: var(--panel); opacity: 0.7; }
 /* invisible text used only to size the pill width */
 .skill-slot-sizer {
@@ -427,26 +427,24 @@ body {
 /* ── Heart / Tree button (hero + cards) ── */
 .tree-btn {
   width: 24px; height: 24px; padding: 0;
-  border-radius: 999px; border: 1px solid rgba(255,100,180,0.4);
-  background: rgba(255,80,160,0.12);
+  border-radius: 999px; border: 1px solid #48506a;
+  background: #16203d;
   font-size: 14px; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; cursor: pointer;
-  filter: drop-shadow(0 0 4px rgba(255,80,200,0.5));
-  transition: filter 0.15s ease, background 0.15s ease;
+  transition: filter 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
-.tree-btn:hover { filter: drop-shadow(0 0 8px rgba(255,80,200,0.9)); background: rgba(255,80,160,0.22); }
+.tree-btn:hover { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.6); filter: drop-shadow(0 0 6px rgba(34,197,94,0.7)); }
 .tree-btn-card {
   width: 28px; height: 28px; padding: 0;
-  border-radius: 999px; border: 1px solid rgba(255,100,180,0.4);
-  background: rgba(255,80,160,0.12);
+  border-radius: 999px; border: 1px solid #48506a;
+  background: #16203d;
   font-size: 14px; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  filter: drop-shadow(0 0 4px rgba(255,80,200,0.5));
-  transition: filter 0.15s ease, background 0.15s ease;
+  transition: filter 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
-.tree-btn-card:hover { filter: drop-shadow(0 0 8px rgba(255,80,200,0.9)); background: rgba(255,80,160,0.22); }
+.tree-btn-card:hover { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.6); filter: drop-shadow(0 0 6px rgba(34,197,94,0.7)); }
 .tree-corner { position: absolute; top: 10px; right: 44px; z-index: 2; }
 .tree-corner-home { position: absolute; bottom: 10px; right: 48px; z-index: 2; }
 
@@ -594,13 +592,17 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   line-height: 1;
   flex-shrink: 0;
+  margin-left: 3px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
 }
 .gender-badge-male {
   color: #60a5fa;
@@ -942,15 +944,35 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  max-width: 1000px;
+  flex-wrap: wrap;
 }
 .parent-preview-sidebar {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-top: 232px;
-  min-width: 200px;
-  max-width: 210px;
+  padding-top: 190px;
+  min-width: 210px;
+  flex-shrink: 0;
+}
+/* when sidebar wraps below grid, switch to row and remove top padding */
+@media (max-width: 1050px) {
+  .parent-preview-sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-top: 0;
+    margin-top: 8px;
+    min-width: 0;
+    flex-shrink: 1;
+    width: 100%;
+  }
+  .parent-preview-sidebar .parent-preview-bubble {
+    flex: 0 1 210px;
+  }
+}
+.parent-preview-sidebar .parent-preview-bubble {
+  flex: 0 1 210px;
+  min-width: 180px;
+  width: auto;
 }
 .parent-preview-bubble {
   width: 210px;
@@ -1088,15 +1110,16 @@ body {
   border-color: rgba(248,113,113,0.35);
   background: rgba(248,113,113,0.07);
 }
-/* collection card view: 2x2 grid bottom left */
+/* collection card view: 2x2 grid bottom left aligned with star/tree row */
 .home-card .card-skill-chips {
   position: absolute;
-  bottom: 46px;
-  left: 18px;
-  right: 18px;
+  bottom: 10px;
+  left: 14px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
+  grid-template-columns: auto auto;
+  gap: 3px 7px;
+  width: auto;
+  align-items: end;
 }
 /* edit pal left panel card: 4 in a row */
 .card .card-skill-chips {
@@ -1106,11 +1129,13 @@ body {
 
 /* ── Work Suitability Icons ── */
 .work-suitability-icons {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
   flex-wrap: nowrap;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 .work-icon-dot {
   color: #fff;
@@ -1126,15 +1151,39 @@ body {
   flex-shrink: 0;
 }
 .work-icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
   display: block;
   flex-shrink: 0;
 }
 .work-icon-lvl {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--text-muted);
   line-height: 1;
+}
+
+/* home/collection cards: work icons always on new row */
+.home-card .work-suitability-icons {
+  width: 100%;
+  flex-wrap: wrap;
+  margin-top: 3px;
+  display: flex;
+}
+/* edit page list cards: work icons stay inline, wrap to next line when tight */
+.card .card-title-row {
+  flex-wrap: wrap;
+}
+.card .work-suitability-icons {
+  flex-shrink: 1;
+  overflow: hidden;
+}
+/* when card is narrow, work icons wrap to next line without dot */
+@container (max-width: 320px) {
+  .card .work-suitability-icons {
+    width: 100%;
+    margin-top: 2px;
+  }
+  .card .work-icon-dot { display: none; }
 }

@@ -17,7 +17,7 @@ const TIER_GLOW: Record<PassiveEntry["tier"], React.CSSProperties | null> = {
   platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", fontSize: 12, lineHeight: 1 },
   gold:     { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", fontSize: 12, lineHeight: 1 },
   normal:   null,
-  negative: { color: "#f87171", textShadow: "0 0 6px #f87171, 0 0 12px #ef4444", fontSize: 12, lineHeight: 1 },
+  negative: { color: "var(--text-muted)", fontSize: 12, lineHeight: 1 },
 };
 
 const TIER_SYMBOL: Record<PassiveEntry["tier"], string> = {

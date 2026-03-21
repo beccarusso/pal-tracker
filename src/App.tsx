@@ -404,7 +404,7 @@ export default function App() {
                 <button className={`favorite-btn ${selectedPal.favorite ? "active" : ""}`} onClick={() => toggleFavorite(selectedPal.id)}>
                   {selectedPal.favorite ? "★" : "☆"}
                 </button>
-                <button className="tree-btn" onClick={() => openTree(selectedPal.id)} title="View family tree">❤️</button>
+                <button className="tree-btn" onClick={() => openTree(selectedPal.id)} title="View family tree">🌳</button>
               </div>
               <div className="edit-subtitle">{selectedPal.species}</div>
               <div className="element-display" style={{ marginTop: 8, justifyContent: "flex-start", marginLeft: -5 }}>
