@@ -558,12 +558,12 @@ body {
 }
 .ft-node-root {
   border-color: #ff50c0;
-  background: #1a0d24;
+  background: var(--panel);
   box-shadow: 0 0 0 2px rgba(255,80,200,0.2), 0 0 16px rgba(255,80,200,0.1);
   cursor: default;
   transform: none !important;
 }
-.ft-node-root:hover { border-color: #ff50c0; background: #1a0d24; }
+.ft-node-root:hover { border-color: #ff50c0; background: var(--panel); }
 .ft-node-empty {
   border-style: dashed;
   opacity: 0.4;
@@ -665,14 +665,18 @@ body {
 
 /* ── Tree node gender colors ── */
 .ft-node-male {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 1px rgba(96,165,250,0.2), 0 0 10px rgba(96,165,250,0.08);
+  border-color: #00F9FB;
+  box-shadow: 0 0 0 1px rgba(0,249,251,0.3), 0 0 10px rgba(0,249,251,0.15);
 }
-.ft-node-male .ft-node-img { border-color: #60a5fa; }
+
+.ft-node-male .ft-node-img { border-color: #00F9FB; }
+.ft-node-root.ft-node-male { background: #091e24; }
+.ft-node-root.ft-node-female { background: #1f0d18; }
 .ft-node-female {
   border-color: #f472b6;
   box-shadow: 0 0 0 1px rgba(244,114,182,0.2), 0 0 10px rgba(244,114,182,0.08);
 }
+
 .ft-node-female .ft-node-img { border-color: #f472b6; }
 .ft-gender-male { color: #60a5fa; font-size: 11px; }
 .ft-gender-female { color: #f472b6; font-size: 11px; }
@@ -1058,7 +1062,6 @@ body {
 .ft-skills-bubble {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
   width: 200px;
   background: var(--panel-2);
   border: 1px solid #4f66ff;
@@ -1067,12 +1070,16 @@ body {
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
   z-index: 20;
   pointer-events: none;
-  animation: fadeIn 0.15s ease;
+  animation: ftBubbleIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .ft-skills-bubble-right,
 .ft-skills-bubble-left {
   left: calc(100% + 12px);
   right: auto;
+}
+@keyframes ftBubbleIn {
+  from { opacity: 0; transform: translateY(-50%) translateX(-10px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
 }
 
 /* ── Passive skill chips on pal cards ── */
