@@ -1,6 +1,7 @@
 import type { PassiveEntry, SkillEntry } from "../data/constants";
 import { passiveEntries } from "../data/constants";
 import { elementIcon } from "../utils/helpers";
+import SkillTooltip from "./SkillTooltip";
 
 type Props = {
   title: string;
@@ -127,15 +128,26 @@ export default function SkillSection({
               </span>
 
               {/* visible content layer, absolutely positioned over sizer */}
-              <span className="skill-slot-inner">
-                {activeEl && (
-                  <img src={elementIcon(activeEl)} alt={activeEl} className="skill-slot-icon" />
-                )}
-                {tier && tier !== "normal" && tierGlow && (
-                  <span style={tierGlow}>{tierSym}</span>
-                )}
-                <span className="skill-slot-text">{label}</span>
-              </span>
+              {isPassive && slotVal ? (
+                <SkillTooltip skill={slotVal}>
+                  <span className="skill-slot-inner">
+                    {tier && tier !== "normal" && tierGlow && (
+                      <span style={tierGlow}>{tierSym}</span>
+                    )}
+                    <span className="skill-slot-text">{label}</span>
+                  </span>
+                </SkillTooltip>
+              ) : (
+                <span className="skill-slot-inner">
+                  {activeEl && (
+                    <img src={elementIcon(activeEl)} alt={activeEl} className="skill-slot-icon" />
+                  )}
+                  {tier && tier !== "normal" && tierGlow && (
+                    <span style={tierGlow}>{tierSym}</span>
+                  )}
+                  <span className="skill-slot-text">{label}</span>
+                </span>
+              )}
 
               {/* native select overlaid invisibly for interaction */}
               <select

@@ -50,7 +50,7 @@ export default function ParentSelect({ selectId, label, pals, selectedPal, field
         <option value="wild">🌿 Wild</option>
         {eligible.map((p) => (
           <option key={p.id} value={String(p.id)}>
-            {titleOf(p)}{p.gender ? (p.gender === "male" ? " ♂" : " ♀") : ""}
+            {titleOf(p)} (Lv.{p.level}){p.gender ? (p.gender === "male" ? " ♂" : " ♀") : ""}
           </option>
         ))}
       </select>

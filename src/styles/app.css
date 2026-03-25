@@ -592,10 +592,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 15px;
-  height: 15px;
-  border-radius: 999px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1;
   flex-shrink: 0;
@@ -1193,4 +1190,243 @@ body {
     margin-top: 2px;
   }
   .card .work-icon-dot { display: none; }
+}
+
+
+
+/* ── Import button ── */
+.import-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #48506a;
+  background: #16203d;
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.import-btn:hover {
+  background: rgba(79,102,255,0.15);
+  border-color: rgba(79,102,255,0.6);
+  color: #fff;
+}
+
+/* ── Modal overlay ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fadeIn 0.15s ease;
+}
+.modal-box {
+  background: var(--panel);
+  border: 1px solid #4f66ff;
+  border-radius: 20px;
+  padding: 28px 32px;
+  width: 480px;
+  max-width: 95vw;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  animation: slideIn 0.2s cubic-bezier(0.22,1,0.36,1);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.modal-close:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.modal-desc {
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.modal-desc code {
+  background: rgba(79,102,255,0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #a5b4fc;
+}
+
+/* ── File input ── */
+.import-file-area {
+  margin-bottom: 16px;
+}
+.import-file-label {
+  display: block;
+  padding: 12px 16px;
+  border: 2px dashed #48506a;
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.import-file-label:hover { border-color: #4f66ff; color: var(--text-soft); }
+.import-file-input { display: none; }
+.import-error {
+  color: #f87171;
+  font-size: 13px;
+  padding: 10px 14px;
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+/* ── Preview stats ── */
+.import-preview {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.import-stat {
+  flex: 1;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+.import-stat-num {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: #a5b4fc;
+}
+.import-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: block;
+}
+
+/* ── Mode selector ── */
+.import-mode { margin-bottom: 16px; }
+.import-mode-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 8px;
+}
+.import-mode-options { display: flex; flex-direction: column; gap: 8px; }
+.import-mode-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-soft);
+  cursor: pointer;
+}
+.import-mode-option input { margin-top: 2px; accent-color: #4f66ff; }
+.import-mode-option strong { color: #fff; }
+.import-warning {
+  color: #fbbf24;
+  font-size: 12px;
+  padding: 8px 12px;
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+/* ── Confirm button ── */
+.import-confirm-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #4f66ff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.import-confirm-btn:hover { background: #6274ff; transform: translateY(-1px); }
+.import-confirm-btn:active { transform: translateY(0); }
+
+/* ── Success state ── */
+.import-success {
+  text-align: center;
+  padding: 20px 0;
+}
+.import-success-icon {
+  font-size: 48px;
+  color: #22c55e;
+  margin-bottom: 12px;
+}
+.import-success-msg {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.import-success-sub {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+/* ── Passive skill description tooltip ── */
+.skill-tooltip-trigger {
+  cursor: default;
+}
+.skill-desc-bubble {
+  position: fixed;
+  z-index: 300;
+  width: 200px;
+  background: var(--panel-2);
+  border: 1px solid #4f66ff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  pointer-events: none;
+  animation: ftBubbleIn 0.2s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+.skill-desc-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 5px;
+}
+.skill-desc-text {
+  font-size: 11px;
+  color: var(--text-soft);
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.skill-desc-note {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 10px;
 }

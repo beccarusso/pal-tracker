@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import type { Pal } from "../types";
 import { elementIcon, imgError, imgPath, titleOf } from "../utils/helpers";
 import { passiveEntries } from "../data/constants";
+import SkillTooltip from "./SkillTooltip";
 
 // maps species data key → icon filename
 const WORK_ICON: Record<string, string> = {
@@ -101,9 +102,11 @@ export default function PalCard({
                   .map((s) => {
                     const tier = passiveEntries.find((e) => e.name === s)?.tier ?? "normal";
                     return (
-                      <span key={s} className={`card-skill-chip${tier !== "normal" ? ` tier-${tier}` : ""}`}>
-                        {s}
-                      </span>
+                      <SkillTooltip key={s} skill={s}>
+                        <span className={`card-skill-chip${tier !== "normal" ? ` tier-${tier}` : ""}`}>
+                          {s}
+                        </span>
+                      </SkillTooltip>
                     );
                   })}
               </div>
