@@ -1,24 +1,22 @@
 // src/components/FilterBar.tsx
 
-// ── Types ─────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────
 export type SortField = "name" | "level" | "species" | "favorites";
 export type SortOrder = "asc" | "desc";
 
 export type FilterState = {
-  search:   string;
-  sort:     SortField;
-  order:    SortOrder;
-  elements: string[];
-  works:    string[];
+  search:  string;
+  sort:    SortField;
+  order:   SortOrder;
+  element: string | null;  // single selected element — null = show all
+  work:    string | null;  // single selected work — null = show all
 };
 
 export const DEFAULT_FILTER: FilterState = {
-  search: "", sort: "name", order: "asc", elements: [], works: [],
+  search: "", sort: "name", order: "asc", element: null, work: null,
 };
 
-// ── Single source of truth for work icon paths ────────────────
-// Exported so PalCard can import this instead of duplicating the map.
-// Keys match workSuitability Record keys from species.json.
+// ── Work icon map — single source of truth, imported by PalCard ───
 export const WORK_ICON_MAP: Record<string, string> = {
   kindling:     "/images/work/kindling.png",
   watering:     "/images/work/watering.png",
@@ -34,8 +32,8 @@ export const WORK_ICON_MAP: Record<string, string> = {
   farming:      "/images/work/farming.png",
 };
 
-// ── Element icon list for filter bar ─────────────────────────
-const ELEMENTS = [
+// ── Static lists ──────────────────────────────────────────────────
+const ELEMENTS: { id: string; label: string }[] = [
   { id: "ice",      label: "Ice"      },
   { id: "dragon",   label: "Dragon"   },
   { id: "dark",     label: "Dark"     },
@@ -47,8 +45,7 @@ const ELEMENTS = [
   { id: "neutral",  label: "Neutral"  },
 ];
 
-// Work entries for filter bar (id matches WORK_ICON_MAP keys)
-const WORKS = [
+const WORKS: { id: string; label: string }[] = [
   { id: "planting",     label: "Planting"     },
   { id: "cooling",      label: "Cooling"      },
   { id: "farming",      label: "Farming"      },
@@ -63,23 +60,25 @@ const WORKS = [
   { id: "watering",     label: "Watering"     },
 ];
 
-function toggle(arr: string[], val: string): string[] {
-  return arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val];
-}
-
+// ── Props ─────────────────────────────────────────────────────────
 type Props = {
   value:    FilterState;
   onChange: (next: FilterState) => void;
-  compact?: boolean; // true = edit-page left panel (search+sort only, no icon rows)
+  compact?: boolean; // true = edit page left panel (search + sort + order only)
 };
 
 export default function FilterBar({ value, onChange, compact = false }: Props) {
   const set = (patch: Partial<FilterState>) => onChange({ ...value, ...patch });
 
+  // Single-select toggle: clicking an already-active item deselects it.
+  // Clicking a different item switches to it (previous auto-deselects).
+  const toggleElement = (id: string) => set({ element: value.element === id ? null : id });
+  const toggleWork    = (id: string) => set({ work:    value.work    === id ? null : id });
+
   return (
     <div className={`filter-bar${compact ? " filter-bar-compact" : ""}`}>
 
-      {/* ── Search + (compact: sort/order dropdowns inline) ── */}
+      {/* ── Row 1: search + (compact) sort/order ── */}
       <div className="filter-top-row">
         <div className="filter-search-wrap">
           {!compact && <span className="filter-label">Search for Pal</span>}
@@ -115,9 +114,10 @@ export default function FilterBar({ value, onChange, compact = false }: Props) {
         )}
       </div>
 
-      {/* ── Full mode: sort dropdowns + element/work icon rows ── */}
+      {/* ── Full mode only: sort row + icon filter rows ── */}
       {!compact && (
         <>
+          {/* Sort + Order */}
           <div className="filter-sort-row">
             <div className="filter-sort-group">
               <span className="filter-label">Sort</span>
@@ -139,34 +139,59 @@ export default function FilterBar({ value, onChange, compact = false }: Props) {
             </div>
           </div>
 
+          {/* Element + Work icon rows */}
           <div className="filter-icon-section">
-            {/* Element toggles */}
+
+            {/* Element — single select */}
             <div className="filter-icon-group">
-              <span className="filter-label">Filter by element</span>
+              <span className="filter-label">
+                Filter by element
+                {value.element && (
+                  <button className="filter-clear-chip" onClick={() => set({ element: null })}>
+                    {value.element} ✕
+                  </button>
+                )}
+              </span>
               <div className="filter-icon-row">
                 {ELEMENTS.map(({ id, label }) => (
-                  <button key={id} type="button" title={label}
-                    className={`filter-icon-btn${value.elements.includes(id) ? " filter-icon-btn-active" : ""}`}
-                    onClick={() => set({ elements: toggle(value.elements, id) })}>
+                  <button
+                    key={id}
+                    type="button"
+                    title={label}
+                    className={`filter-icon-btn${value.element === id ? " filter-icon-btn-active" : ""}`}
+                    onClick={() => toggleElement(id)}
+                  >
                     <img src={`/images/elements/${id}-icon.png`} alt={label} className="filter-icon-img" />
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Work toggles */}
+            {/* Work — single select */}
             <div className="filter-icon-group">
-              <span className="filter-label">Filter by work</span>
+              <span className="filter-label">
+                Filter by work
+                {value.work && (
+                  <button className="filter-clear-chip" onClick={() => set({ work: null })}>
+                    {value.work} ✕
+                  </button>
+                )}
+              </span>
               <div className="filter-icon-row">
                 {WORKS.map(({ id, label }) => (
-                  <button key={id} type="button" title={label}
-                    className={`filter-icon-btn${value.works.includes(id) ? " filter-icon-btn-active" : ""}`}
-                    onClick={() => set({ works: toggle(value.works, id) })}>
+                  <button
+                    key={id}
+                    type="button"
+                    title={label}
+                    className={`filter-icon-btn${value.work === id ? " filter-icon-btn-active" : ""}`}
+                    onClick={() => toggleWork(id)}
+                  >
                     <img src={WORK_ICON_MAP[id]} alt={label} className="filter-icon-img" />
                   </button>
                 ))}
               </div>
             </div>
+
           </div>
         </>
       )}

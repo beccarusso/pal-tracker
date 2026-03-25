@@ -13,6 +13,7 @@ import {
 import {
   buildChildMap, elementIcon, getParentWarnings, imgError, imgPath,
   loadJSON, normalizePal, sortPals, titleOf,
+  IV_STATS, IV_COLORS, ivColor,
   type RawPal, type SpeciesData,
 } from "./utils/helpers";
 import { supabase } from "./lib/supabase";
@@ -38,13 +39,13 @@ export default function App() {
     return s ? Number(s) : null;
   });
   const [hoveredPalId, setHoveredPalId]   = useState<number | null>(null);
-  const [filter, setFilter]               = useState<FilterState>(DEFAULT_FILTER); // collection page
-  const [editFilter, setEditFilter]       = useState<FilterState>(DEFAULT_FILTER); // edit left panel
+  const [filter, setFilter]               = useState<FilterState>(DEFAULT_FILTER);
+  const [editFilter, setEditFilter]       = useState<FilterState>(DEFAULT_FILTER);
   const [palListOpen, setPalListOpen]     = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [collectionView, setCollectionView]   = useState<"card" | "grid">("card");
 
-  // ── Helpers ───────────────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────
   const setSelectedPalId = (id: number | null) => {
     _setSelectedPalId(id);
     id === null ? sessionStorage.removeItem(SESSION_KEY) : sessionStorage.setItem(SESSION_KEY, String(id));
@@ -53,7 +54,7 @@ export default function App() {
   const selectPalId = setSelectedPalId as React.Dispatch<React.SetStateAction<number | null>>;
   const markDirty   = (id: number) => setDirtyIds((prev) => new Set(prev).add(id));
 
-  // ── Derived ───────────────────────────────────────────────────
+  // ── Derived ─────────────────────────────────────────────────────
   const selectedPal    = pals.find((p) => p.id === selectedPalId) ?? null;
   const isSaved        = selectedPalId !== null && savedIds.has(selectedPalId) && !dirtyIds.has(selectedPalId);
   const speciesMap     = useMemo(() => new Map(speciesList.map((s) => [s.species, s.element])), [speciesList]);
@@ -64,7 +65,7 @@ export default function App() {
   const sortedPals     = useMemo(() => sortPals(pals), [pals]);
   const wildLocked     = selectedPal?.parent1Id === "wild" || selectedPal?.parent2Id === "wild";
 
-  // ── Sort helper ───────────────────────────────────────────────
+  // ── Sort helper ─────────────────────────────────────────────────
   const applySort = (list: Pal[], f: FilterState) => {
     const dir = f.order === "asc" ? 1 : -1;
     return [...list].sort((a, b) => {
@@ -78,21 +79,32 @@ export default function App() {
     });
   };
 
-  // ── Collection filter (search + element + work + sort) ────────
+  // ── Collection filter (search + single element + single work + sort) ──
   const filteredPals = useMemo(() => {
     let r = sortedPals;
+
     if (filter.search.trim()) {
       const q = filter.search.trim().toLowerCase();
-      r = r.filter((p) => [titleOf(p), p.species, ...p.element].some((v) => v.toLowerCase().includes(q)));
+      r = r.filter((p) =>
+        [titleOf(p), p.species, ...p.element].some((v) => v.toLowerCase().includes(q))
+      );
     }
-    if (filter.elements.length)
-      r = r.filter((p) => filter.elements.some((el) => p.element.map((e) => e.toLowerCase()).includes(el)));
-    if (filter.works.length)
-      r = r.filter((p) => filter.works.some((w) => (p.workSuitability?.[w] ?? 0) > 0));
+
+    // Single element filter — pal must have this element
+    if (filter.element) {
+      const el = filter.element.toLowerCase();
+      r = r.filter((p) => p.element.map((e) => e.toLowerCase()).includes(el));
+    }
+
+    // Single work filter — pal must have this work > 0
+    if (filter.work) {
+      r = r.filter((p) => (p.workSuitability?.[filter.work!] ?? 0) > 0);
+    }
+
     return applySort(r, filter);
   }, [sortedPals, filter]);
 
-  // ── Edit panel filter (search + sort only) ────────────────────
+  // ── Edit panel filter (search + sort only, no element/work) ────
   const editFilteredPals = useMemo(() => {
     let r = sortedPals;
     if (editFilter.search.trim()) {
@@ -102,7 +114,7 @@ export default function App() {
     return applySort(r, editFilter);
   }, [sortedPals, editFilter]);
 
-  // ── Required field validation ─────────────────────────────────
+  // ── Required fields ─────────────────────────────────────────────
   const missingFields = selectedPal ? {
     gender:  !selectedPal.gender,
     species: !selectedPal.species,
@@ -114,7 +126,7 @@ export default function App() {
   const Req = ({ field }: { field: keyof typeof missingFields }) =>
     missingFields[field] ? <span className="required-indicator" title="Required">!</span> : null;
 
-  // ── Pal mutations ─────────────────────────────────────────────
+  // ── Mutations ───────────────────────────────────────────────────
   const updatePal = (next: Pal) => {
     setPals((prev) => prev.map((p) => p.id === next.id ? next : p));
     markDirty(next.id);
@@ -132,7 +144,11 @@ export default function App() {
   const setParent = (field: "parent1Id" | "parent2Id", value: ParentRef) => {
     if (!selectedPal) return;
     if (value === "wild") return updatePal({ ...selectedPal, parent1Id: "wild", parent2Id: "wild" });
-    if (wildLocked) return updatePal({ ...selectedPal, [field]: value, ...(field === "parent1Id" ? { parent2Id: null } : { parent1Id: null }) });
+    if (wildLocked) return updatePal({
+      ...selectedPal,
+      parent1Id: field === "parent1Id" ? value : null,
+      parent2Id: field === "parent2Id" ? value : null,
+    });
     updatePal({ ...selectedPal, [field]: value });
   };
 
@@ -152,8 +168,8 @@ export default function App() {
   const toggleFavorite = (id: number) => {
     setPals((prev) => {
       const maxOrder = prev.reduce((max, p) => p.favorite && p.favoriteOrder !== null ? Math.max(max, p.favoriteOrder) : max, 0);
-      return prev.map((p) => p.id !== id ? p : p.favorite
-        ? { ...p, favorite: false, favoriteOrder: null }
+      return prev.map((p) => p.id !== id ? p
+        : p.favorite ? { ...p, favorite: false, favoriteOrder: null }
         : { ...p, favorite: true, favoriteOrder: maxOrder + 1 });
     });
   };
@@ -164,10 +180,13 @@ export default function App() {
     const species = speciesOptions[0] ?? "Lamball";
     const pal: Pal = {
       id: Date.now(), name: species, species,
-      element: speciesMap.get(species) ?? ["neutral"], level: 1, gender: null,
+      element: speciesMap.get(species) ?? ["neutral"],
+      level: 1, gender: null,
       passiveSkills: [], activeSkills: [],
       parent1Id: null, parent2Id: null,
-      notes: "", favorite: false, favoriteOrder: null,
+      notes: "",
+      ivHP: 0, ivAttack: 0, ivDefense: 0,
+      favorite: false, favoriteOrder: null,
     };
     setPals((prev) => [...prev.filter((p) => savedIds.has(p.id)), pal]);
     setSelectedPalId(pal.id);
@@ -182,11 +201,18 @@ export default function App() {
     setPals((prev) => {
       const remaining = prev
         .filter((p) => p.id !== deadId)
-        .map((p) => ({ ...p, parent1Id: p.parent1Id === deadId ? null : p.parent1Id, parent2Id: p.parent2Id === deadId ? null : p.parent2Id }));
+        .map((p) => ({
+          ...p,
+          parent1Id: p.parent1Id === deadId ? null : p.parent1Id,
+          parent2Id: p.parent2Id === deadId ? null : p.parent2Id,
+        }));
       try { savePalsToDb(user.id, remaining); } catch (e) { console.warn("Failed to persist deletion.", e); }
       const idx  = prev.findIndex((p) => p.id === deadId);
       const next = remaining[idx] ?? remaining[idx - 1] ?? null;
-      if (selectedPalId === deadId) { setSelectedPalId(next?.id ?? null); if (!next) navigate("collection"); }
+      if (selectedPalId === deadId) {
+        setSelectedPalId(next?.id ?? null);
+        if (!next) navigate("collection");
+      }
       return remaining;
     });
     setSavedIds((prev) => { const n = new Set(prev); n.delete(deadId); return n; });
@@ -199,7 +225,7 @@ export default function App() {
     if (!pal || !window.confirm(`Delete ${titleOf(pal)}? This cannot be undone.`)) return;
     _setSelectedPalId(id);
     sessionStorage.setItem(SESSION_KEY, String(id));
-    setTimeout(() => selectedPal && requestDelete(selectedPal.id), 0);
+    setTimeout(() => requestDelete(id), 0);
   };
 
   const updateSkill = (field: "passiveSkills" | "activeSkills", skill: string, action: "add" | "remove", replacing?: string) => {
@@ -216,13 +242,17 @@ export default function App() {
     image: ref === "wild" ? WILD_IMAGE : typeof ref === "number" ? imgPath(palById.get(ref)?.species ?? "") : "",
   });
 
-  // ── Auth + data load ──────────────────────────────────────────
+  // ── Auth ────────────────────────────────────────────────────────
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { setUser(data.session?.user ?? null); setAuthLoading(false); });
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+      setAuthLoading(false);
+    });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setUser(s?.user ?? null));
     return () => subscription.unsubscribe();
   }, []);
 
+  // ── Data load ───────────────────────────────────────────────────
   useEffect(() => {
     if (authLoading) return;
     (async () => {
@@ -232,11 +262,18 @@ export default function App() {
         let source: RawPal[] = [];
         if (user) {
           const dbData = await loadPals(user.id);
-          source = dbData && Array.isArray(dbData) && dbData.length ? dbData as RawPal[] : await loadJSON<RawPal[]>("/data/my-pals.json");
+          source = dbData && Array.isArray(dbData) && dbData.length
+            ? dbData as RawPal[]
+            : await loadJSON<RawPal[]>("/data/my-pals.json");
         }
         const loaded = source.map((p) => {
           const pal = normalizePal(p, fetchedSpecies, source);
-          return { ...pal, gender: (p as any).gender ?? null, passiveSkills: pal.passiveSkills.slice(0, 4), activeSkills: pal.activeSkills.slice(0, 3) };
+          return {
+            ...pal,
+            gender:        (p as any).gender ?? null,
+            passiveSkills: pal.passiveSkills.slice(0, 4),
+            activeSkills:  pal.activeSkills.slice(0, 3),
+          };
         });
         setPals(loaded);
         setSavedIds(new Set(loaded.map((p) => p.id)));
@@ -244,11 +281,16 @@ export default function App() {
     })();
   }, [user, authLoading]);
 
-  // ── Auth screens ──────────────────────────────────────────────
-  if (authLoading)
-    return <div style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:"100vh", background:"var(--bg)", color:"#fff", fontSize:18 }}>Loading...</div>;
+  // ── Auth screens ────────────────────────────────────────────────
+  if (authLoading) {
+    return (
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:"100vh", background:"var(--bg)", color:"#fff", fontSize:18 }}>
+        Loading...
+      </div>
+    );
+  }
 
-  if (!user)
+  if (!user) {
     return (
       <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"100vh", background:"var(--bg)", color:"#fff", gap:24 }}>
         <h1 style={{ fontSize:48, margin:0 }}>My Pals</h1>
@@ -259,6 +301,7 @@ export default function App() {
         </button>
       </div>
     );
+  }
 
   const TopNav = ({ current }: { current: Page }) => (
     <nav className="top-nav">
@@ -267,9 +310,9 @@ export default function App() {
     </nav>
   );
 
-  // ════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
   // COLLECTION PAGE
-  // ════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
   if (page === "collection") return (
     <div className="home-page">
       <div className="home-header-wrap">
@@ -277,7 +320,9 @@ export default function App() {
           <h1 className="home-title" style={{ margin:0 }}>My Pals</h1>
           <button className="secondary-btn-sm" onClick={() => supabase.auth.signOut()}>Sign Out</button>
         </div>
+
         <TopNav current="collection" />
+
         <div style={{ width:"100%", maxWidth:1200, marginTop:16 }}>
           <FilterBar value={filter} onChange={setFilter} />
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10, marginBottom:4 }}>
@@ -288,15 +333,25 @@ export default function App() {
             <button className="btn" onClick={addPal}>+ Add Pal</button>
           </div>
         </div>
-        <img src={EMPTY_STATE_IMAGE} alt="Pal friends" className="home-image" onError={imgError} />
       </div>
-      {filteredPals.length ? (
+
+      {/* Empty state — only shown when collection has no pals at all */}
+      {!pals.length ? (
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", marginTop:32 }}>
+          <img src={EMPTY_STATE_IMAGE} alt="No pals yet" className="home-image" onError={imgError} />
+          <p style={{ color:"var(--text-muted)", fontSize:16, textAlign:"center", marginTop:8 }}>
+            Add your first pal to start building your collection!
+          </p>
+        </div>
+      ) : filteredPals.length ? (
         <div className={`home-grid ${collectionView === "grid" ? "grid-view" : ""}`}>
           {filteredPals.map((pal) => (
             <PalCard key={pal.id} pal={pal} home
-              hovered={hoveredPalId === pal.id} onHover={setHoveredPalId}
+              hovered={hoveredPalId === pal.id}
+              onHover={setHoveredPalId}
               onSelect={(id) => { selectPalId(id); navigate("edit"); }}
-              onToggleFavorite={toggleFavorite} onOpenTree={openTree}
+              onToggleFavorite={toggleFavorite}
+              onOpenTree={openTree}
               gridView={collectionView === "grid"}
             />
           ))}
@@ -307,9 +362,9 @@ export default function App() {
     </div>
   );
 
-  // ════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
   // FAMILY TREE PAGE
-  // ════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
   if (page === "tree") return (
     <div style={{ minHeight:"100vh", background:"var(--bg)", color:"#fff" }}>
       <div style={{ padding:"20px 28px 0" }}>
@@ -332,16 +387,18 @@ export default function App() {
           <button className="secondary-btn-sm" onClick={() => supabase.auth.signOut()}>Sign Out</button>
         </div>
         <TopNav current="edit" />
-        <p style={{ color:"var(--text-muted)", marginTop:24 }}>No pal selected. Go to Collection and click a pal to edit it.</p>
+        <p style={{ color:"var(--text-muted)", marginTop:24 }}>
+          No pal selected. Go to Collection and click a pal to edit it.
+        </p>
       </div>
     </div>
   );
 
   const parents = [selectedPal.parent1Id, selectedPal.parent2Id].filter((p): p is ParentRef => p !== null);
 
-  // ════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
   // EDIT PAGE
-  // ════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
   return (
     <div className="page">
       {/* ── Left panel ── */}
@@ -359,11 +416,19 @@ export default function App() {
 
         <div className="list">
           {editFilteredPals.map((pal) => (
-            <PalCard key={pal.id} pal={pal} selected={selectedPalId === pal.id} hovered={hoveredPalId === pal.id}
-              onHover={setHoveredPalId} onSelect={selectPalId} onToggleFavorite={toggleFavorite}
-              onOpenTree={openTree} onDelete={requestDelete} />
+            <PalCard key={pal.id} pal={pal}
+              selected={selectedPalId === pal.id}
+              hovered={hoveredPalId === pal.id}
+              onHover={setHoveredPalId}
+              onSelect={selectPalId}
+              onToggleFavorite={toggleFavorite}
+              onOpenTree={openTree}
+              onDelete={requestDelete}
+            />
           ))}
-          {!editFilteredPals.length && <div className="card"><span className="plain">No pals match your search.</span></div>}
+          {!editFilteredPals.length && (
+            <div className="card"><span className="plain">No pals match your search.</span></div>
+          )}
         </div>
 
         <div className="mobile-pal-switcher">
@@ -383,9 +448,15 @@ export default function App() {
           {palListOpen && (
             <div className="mobile-pal-dropdown">
               {editFilteredPals.map((pal) => (
-                <PalCard key={pal.id} pal={pal} selected={selectedPalId === pal.id} hovered={hoveredPalId === pal.id}
-                  onHover={setHoveredPalId} onSelect={(id) => { selectPalId(id); setPalListOpen(false); }}
-                  onToggleFavorite={toggleFavorite} onOpenTree={openTree} onDelete={confirmDeletePal} />
+                <PalCard key={pal.id} pal={pal}
+                  selected={selectedPalId === pal.id}
+                  hovered={hoveredPalId === pal.id}
+                  onHover={setHoveredPalId}
+                  onSelect={(id) => { selectPalId(id); setPalListOpen(false); }}
+                  onToggleFavorite={toggleFavorite}
+                  onOpenTree={openTree}
+                  onDelete={confirmDeletePal}
+                />
               ))}
             </div>
           )}
@@ -429,16 +500,20 @@ export default function App() {
                         <span className="element-label">{el}</span>
                       </div>
                     ))
-                  : <span className="plain">Unknown</span>}
+                  : <span className="plain">Unknown</span>
+                }
               </div>
             </div>
           </div>
         </div>
 
         <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", maxWidth:760, marginBottom:10, marginTop:8, gap:8 }}>
-          <button className={`btn save-btn ${isSaved ? "save-flash" : ""}`}
-            onClick={() => !hasRequiredMissing && savePals(pals)} disabled={hasRequiredMissing}
-            title={hasRequiredMissing ? "Fill in all required fields before saving" : undefined}>
+          <button
+            className={`btn save-btn ${isSaved ? "save-flash" : ""}`}
+            onClick={() => !hasRequiredMissing && savePals(pals)}
+            disabled={hasRequiredMissing}
+            title={hasRequiredMissing ? "Fill in all required fields before saving" : undefined}
+          >
             {isSaved ? "Saved ✓" : "Save Pal"}
           </button>
           <button className="danger" onClick={() => requestDelete(selectedPal.id)}>Delete Pal</button>
@@ -461,14 +536,21 @@ export default function App() {
             </select>
 
             <label htmlFor="pal-level">Level <Req field="level" /></label>
-            <input id="pal-level" className="input" type="number" min={1} value={selectedPal.level} onChange={(e) => change("level", Number(e.target.value) || 1)} />
+            <input id="pal-level" className="input" type="number" min={1} value={selectedPal.level}
+              onChange={(e) => change("level", Number(e.target.value) || 1)} />
 
             <label>Gender <Req field="gender" /></label>
             <div className="gender-toggle">
-              <button type="button" className={`gender-btn gender-btn-male ${selectedPal.gender === "male" ? "gender-btn-active-male" : ""}`}
-                onClick={() => change("gender", selectedPal.gender === "male" ? null : "male")}>♂ Male</button>
-              <button type="button" className={`gender-btn gender-btn-female ${selectedPal.gender === "female" ? "gender-btn-active-female" : ""}`}
-                onClick={() => change("gender", selectedPal.gender === "female" ? null : "female")}>♀ Female</button>
+              <button type="button"
+                className={`gender-btn gender-btn-male ${selectedPal.gender === "male" ? "gender-btn-active-male" : ""}`}
+                onClick={() => change("gender", selectedPal.gender === "male" ? null : "male")}>
+                ♂ Male
+              </button>
+              <button type="button"
+                className={`gender-btn gender-btn-female ${selectedPal.gender === "female" ? "gender-btn-active-female" : ""}`}
+                onClick={() => change("gender", selectedPal.gender === "female" ? null : "female")}>
+                ♀ Female
+              </button>
             </div>
 
             <ParentSelect selectId="parent-1" label={<>Parent 1 <Req field="parent1" /></>}
@@ -479,8 +561,12 @@ export default function App() {
               value={selectedPal.parent2Id} other={selectedPal.parent1Id}
               disabled={wildLocked} onChange={setParent} />
 
-            {!!parentWarnings.warnings.length && <div className="warning-box">{parentWarnings.warnings.map((w) => <div key={w}>• {w}</div>)}</div>}
-            {!!parentWarnings.notes.length && !parentWarnings.warnings.length && <div className="note-box">{parentWarnings.notes.map((n) => <div key={n}>• {n}</div>)}</div>}
+            {!!parentWarnings.warnings.length && (
+              <div className="warning-box">{parentWarnings.warnings.map((w) => <div key={w}>• {w}</div>)}</div>
+            )}
+            {!!parentWarnings.notes.length && !parentWarnings.warnings.length && (
+              <div className="note-box">{parentWarnings.notes.map((n) => <div key={n}>• {n}</div>)}</div>
+            )}
 
             <label>Parents</label>
             <div className="parent-wrap">
@@ -497,9 +583,37 @@ export default function App() {
 
             <label htmlFor="pal-notes">Notes</label>
             <textarea id="pal-notes" className="input" value={selectedPal.notes}
-              onChange={(e) => change("notes", e.target.value)} style={{ minHeight:100, resize:"vertical" }} />
+              onChange={(e) => change("notes", e.target.value)}
+              style={{ minHeight:100, resize:"vertical" }} />
+
+            {/* ── IV inputs ── */}
+            <label>IVs</label>
+            <div className="iv-input-row">
+              {IV_STATS.map(({ key, symbol, label }) => {
+                const val = (selectedPal as any)[key] ?? 0;
+                const col = IV_COLORS[ivColor(val)];
+                return (
+                  <div key={key} className="iv-input-group">
+                    <span className="iv-input-symbol" style={{ color: col }}>{symbol}</span>
+                    <span className="iv-input-label">{label}</span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      className="input iv-input"
+                      value={val}
+                      onChange={(e) => {
+                        const n = Math.max(0, Math.min(100, Number(e.target.value) || 0));
+                        change(key as keyof Pal, n);
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
+          {/* Parent passive skills preview sidebar */}
           <div className="parent-preview-sidebar">
             {[selectedPal.parent1Id, selectedPal.parent2Id].map((ref, i) => {
               const previewPal = typeof ref === "number" ? palById.get(ref) : null;
@@ -519,7 +633,8 @@ export default function App() {
                           const tier = passiveEntries.find((e) => e.name === s)?.tier ?? "normal";
                           return <div key={s} className={`parent-preview-skill${tier !== "normal" ? ` tier-${tier}` : ""}`}>{s}</div>;
                         })
-                      : <div className="parent-preview-skill" style={{ color:"var(--text-muted)" }}>No passive skills</div>}
+                      : <div className="parent-preview-skill" style={{ color:"var(--text-muted)" }}>No passive skills</div>
+                    }
                   </div>
                 </div>
               );
@@ -528,18 +643,23 @@ export default function App() {
         </div>
 
         <SkillSection title="Passive Skills" options={passiveOptions} skills={selectedPal.passiveSkills} max={4}
-          onAdd={(s, r) => updateSkill("passiveSkills", s, "add", r)} onRemove={(s) => updateSkill("passiveSkills", s, "remove")} />
+          onAdd={(s, r) => updateSkill("passiveSkills", s, "add", r)}
+          onRemove={(s) => updateSkill("passiveSkills", s, "remove")} />
         <SkillSection title="Active Skills" skillEntries={getSortedActiveSkills(selectedPal.element)}
           palElements={selectedPal.element} skills={selectedPal.activeSkills} max={3}
-          onAdd={(s, r) => updateSkill("activeSkills", s, "add", r)} onRemove={(s) => updateSkill("activeSkills", s, "remove")} />
+          onAdd={(s, r) => updateSkill("activeSkills", s, "add", r)}
+          onRemove={(s) => updateSkill("activeSkills", s, "remove")} />
       </div>
 
+      {/* Delete confirmation modal */}
       {confirmDeleteId !== null && (
         <div className="confirm-overlay" onClick={() => setConfirmDeleteId(null)}>
           <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
             <div className="confirm-title">Delete Pal?</div>
             <div className="confirm-body">
-              Are you sure you want to delete <strong>{titleOf(pals.find((p) => p.id === confirmDeleteId) ?? { name:"", species:"Unknown" })}</strong>? This cannot be undone.
+              Are you sure you want to delete{" "}
+              <strong>{titleOf(pals.find((p) => p.id === confirmDeleteId) ?? { name:"", species:"Unknown" })}</strong>
+              ? This cannot be undone.
             </div>
             <div className="confirm-actions">
               <button className="secondary-btn-sm" onClick={() => setConfirmDeleteId(null)}>Cancel</button>

@@ -1,6 +1,10 @@
+// src/components/FamilyTree.tsx
 import { useState, useCallback, useRef } from "react";
 import type { Pal } from "../types";
-import { imgPath, imgError, titleOf } from "../utils/helpers";
+import {
+  imgPath, imgError, titleOf,
+  IV_STATS, IV_COLORS, ivColor, ivGlow,
+} from "../utils/helpers";
 import { passiveEntries } from "../data/constants";
 
 type Props = {
@@ -40,7 +44,9 @@ function buildTree(
     : [];
   return {
     pal, isWild: false,
-    parent1: bothWild ? { pal: null, isWild: true, parent1: null, parent2: null, children: [] } : buildTree(p1, palMap, childMap, new Set(visited), false),
+    parent1: bothWild
+      ? { pal: null, isWild: true, parent1: null, parent2: null, children: [] }
+      : buildTree(p1, palMap, childMap, new Set(visited), false),
     parent2: bothWild ? null : buildTree(p2, palMap, childMap, new Set(visited), false),
     children: kids,
   };
@@ -56,21 +62,53 @@ function buildChildMap(pals: Pal[]): Map<number, number[]> {
   return map;
 }
 
+// ── Hover bubble: passive skills + IV display top-right ───────────
 function SkillsBubble({ pal, side }: { pal: Pal; side: "left" | "right" }) {
+  const hasIVs = ((pal.ivHP ?? 0) + (pal.ivAttack ?? 0) + (pal.ivDefense ?? 0)) > 0;
+
   return (
     <div className={`ft-skills-bubble ft-skills-bubble-${side}`}>
-      <div className="parent-preview-header">
+
+      {/* Header row */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
         <img src={imgPath(pal.species)} alt={pal.species} className="parent-preview-img" onError={imgError} />
-        <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div className="parent-preview-name">{titleOf(pal)}</div>
           <div className="parent-preview-sub">Passive Skills</div>
         </div>
+        {/* IVs — stacked vertically top-right of bubble */}
+        {hasIVs && (
+          <div className="ft-bubble-ivs">
+            {IV_STATS.map(({ key, symbol }) => {
+              const val = (pal as any)[key] ?? 0;
+              if (val === 0) return null;
+              const col  = IV_COLORS[ivColor(val)];
+              const glow = ivGlow(val);
+              return (
+                <div key={key} className="ft-bubble-iv-row" title={`${key.replace("iv", "")} IV: ${val}/100`}>
+                  <span style={{ color: col, textShadow: glow, fontSize: 10, fontWeight: 700, lineHeight: 1 }}>
+                    {symbol}
+                  </span>
+                  <span style={{ color: col, textShadow: glow, fontSize: 9, fontWeight: 700, lineHeight: 1 }}>
+                    {val}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
+
+      {/* Passive skills */}
       <div className="parent-preview-skills">
         {pal.passiveSkills.length > 0
           ? pal.passiveSkills.map((s) => {
               const tier = passiveEntries.find((e) => e.name === s)?.tier ?? "normal";
-              return <div key={s} className={`parent-preview-skill${tier !== "normal" ? ` tier-${tier}` : ""}`}>{s}</div>;
+              return (
+                <div key={s} className={`parent-preview-skill${tier !== "normal" ? ` tier-${tier}` : ""}`}>
+                  {s}
+                </div>
+              );
             })
           : <div className="parent-preview-skill" style={{ color: "var(--text-muted)" }}>No passive skills</div>
         }
@@ -95,9 +133,8 @@ function Node({ node, onReroot, isRoot, positionHint = "center" }: NodeProps) {
   const [hovered, setHovered] = useState(false);
   const nodeRef = useRef<HTMLDivElement>(null);
 
-  // determine which side to show bubble: if node is on left half, show right; otherwise show left
   const getBubbleSide = (): "left" | "right" => {
-    if (positionHint === "left") return "right";
+    if (positionHint === "left")  return "right";
     if (positionHint === "right") return "left";
     if (nodeRef.current) {
       const rect = nodeRef.current.getBoundingClientRect();
@@ -119,7 +156,7 @@ function Node({ node, onReroot, isRoot, positionHint = "center" }: NodeProps) {
 
   if (!node.pal) return null;
   const { pal } = node;
-  const hasParents = node.parent1 || node.parent2;
+  const hasParents  = node.parent1 || node.parent2;
   const hasChildren = node.children.length > 0;
 
   return (
@@ -127,8 +164,16 @@ function Node({ node, onReroot, isRoot, positionHint = "center" }: NodeProps) {
       {hasParents && (
         <>
           <div className="ft-parents-row">
-            {node.parent1 && <div className="ft-parent-slot"><Node node={node.parent1} onReroot={onReroot} positionHint="left" /></div>}
-            {node.parent2 && <div className="ft-parent-slot"><Node node={node.parent2} onReroot={onReroot} positionHint="right" /></div>}
+            {node.parent1 && (
+              <div className="ft-parent-slot">
+                <Node node={node.parent1} onReroot={onReroot} positionHint="left" />
+              </div>
+            )}
+            {node.parent2 && (
+              <div className="ft-parent-slot">
+                <Node node={node.parent2} onReroot={onReroot} positionHint="right" />
+              </div>
+            )}
           </div>
           <div className="ft-connector">
             <div className="ft-connector-hline" />
@@ -144,7 +189,6 @@ function Node({ node, onReroot, isRoot, positionHint = "center" }: NodeProps) {
         onClick={() => !isRoot && onReroot(pal.id)}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        
       >
         <img src={imgPath(pal.species)} alt={pal.species} className="ft-node-img" onError={imgError} />
         <div className="ft-node-info">
@@ -164,11 +208,17 @@ function Node({ node, onReroot, isRoot, positionHint = "center" }: NodeProps) {
 
       {hasChildren && (
         <>
-          <div className="ft-connector"><div className="ft-connector-vline" /></div>
+          <div className="ft-connector">
+            <div className="ft-connector-vline" />
+          </div>
           <div className="ft-children-row">
             {node.children.map((child, i) => (
               <div key={child.pal?.id ?? i} className="ft-parent-slot">
-                <Node node={child} onReroot={onReroot} positionHint={i < node.children.length / 2 ? "left" : "right"} />
+                <Node
+                  node={child}
+                  onReroot={onReroot}
+                  positionHint={i < node.children.length / 2 ? "left" : "right"}
+                />
               </div>
             ))}
           </div>
@@ -178,39 +228,68 @@ function Node({ node, onReroot, isRoot, positionHint = "center" }: NodeProps) {
   );
 }
 
+// ── Main export ───────────────────────────────────────────────────
 export default function FamilyTree({ pals, rootPalId, onSelectPal }: Props) {
   const [localRootId, setLocalRootId] = useState<number | null>(rootPalId);
-  const palMap = new Map(pals.map((p) => [p.id, p]));
-  const childMap = buildChildMap(pals);
-  const effectiveRootId = localRootId ?? pals[0]?.id ?? null;
-  const tree = effectiveRootId ? buildTree(effectiveRootId, palMap, childMap) : null;
-  const rootPal = effectiveRootId ? palMap.get(effectiveRootId) : null;
+  const palMap           = new Map(pals.map((p) => [p.id, p]));
+  const childMap         = buildChildMap(pals);
+  const effectiveRootId  = localRootId ?? pals[0]?.id ?? null;
+  const tree             = effectiveRootId ? buildTree(effectiveRootId, palMap, childMap) : null;
+  const rootPal          = effectiveRootId ? palMap.get(effectiveRootId) : null;
 
   const handleReroot = useCallback((id: number) => {
     setLocalRootId(id);
     onSelectPal(id);
   }, [onSelectPal]);
 
+  // Empty state — no pals yet
+  if (!pals.length) {
+    return (
+      <div style={{
+        display: "flex", flexDirection: "column", alignItems: "center",
+        justifyContent: "center", minHeight: "60vh", padding: "40px 28px",
+      }}>
+        <img
+          src="/images/ui/flopie-friends.png"
+          alt="No pals yet"
+          style={{ maxWidth: 360, width: "100%", opacity: 0.7, marginBottom: 20 }}
+          onError={imgError}
+        />
+        <p style={{ color: "var(--text-muted)", fontSize: 16, textAlign: "center", margin: 0 }}>
+          No pals in your collection yet.<br />
+          Add pals to start building your family tree!
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="ft-page">
       <div className="ft-header">
         <div className="ft-header-right">
           <label htmlFor="ft-root-select" className="ft-select-label">Viewing tree for:</label>
-          <select id="ft-root-select" className="input ft-root-select" value={effectiveRootId ?? ""}
-            onChange={(e) => handleReroot(Number(e.target.value))}>
+          <select
+            id="ft-root-select"
+            className="input ft-root-select"
+            value={effectiveRootId ?? ""}
+            onChange={(e) => handleReroot(Number(e.target.value))}
+          >
             {pals.map((p) => <option key={p.id} value={p.id}>{titleOf(p)}</option>)}
           </select>
         </div>
       </div>
+
       <div className="ft-canvas">
         {tree
           ? <div className="ft-tree-wrap"><Node node={tree} onReroot={handleReroot} isRoot /></div>
           : <div className="ft-empty"><p>No pal selected.</p></div>
         }
       </div>
+
       {rootPal && (
         <div className="ft-root-label">
-          <span>Showing lineage of </span><strong>{titleOf(rootPal)}</strong>
+          <span>Showing lineage of </span>
+          <strong>{titleOf(rootPal)}</strong>
           <span className="ft-root-hint"> · Click any node to re-root</span>
         </div>
       )}
