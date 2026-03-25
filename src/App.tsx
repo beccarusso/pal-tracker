@@ -268,7 +268,16 @@ export default function App() {
           </div>
           <TopNav current="collection" />
           <div className="home-search-row" style={{ marginTop: 16 }}>
-            <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pals, species, or element" />
+            <div className="search-bar">
+              <span className="search-icon">🔍</span>
+              <input
+                className="search-input"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search pals, species, or element..."
+              />
+              {search && <button className="search-clear" onClick={() => setSearch("")}>✕</button>}
+            </div>
             <div className="view-toggle">
               <button className={`view-toggle-btn ${collectionView === "card" ? "active" : ""}`} onClick={() => setCollectionView("card")} title="Card view">⊞ Cards</button>
               <button className={`view-toggle-btn ${collectionView === "grid" ? "active" : ""}`} onClick={() => setCollectionView("grid")} title="Grid view">⊟ Grid</button>
@@ -340,7 +349,16 @@ export default function App() {
           <div className="toolbar" style={{ marginTop: 14 }}>
             <button className="btn" onClick={addPal}>+ Add Pal</button>
           </div>
-          <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pals, species, or element" style={{ marginBottom: 14 }} />
+          <div className="search-bar search-bar-left">
+            <span className="search-icon">🔍</span>
+            <input
+              className="search-input"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search pals..."
+            />
+            {search && <button className="search-clear" onClick={() => setSearch("")}>✕</button>}
+          </div>
         </div>
 
         <div className="list">
