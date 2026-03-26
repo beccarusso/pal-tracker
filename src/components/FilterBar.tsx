@@ -8,15 +8,15 @@ export type FilterState = {
   search:  string;
   sort:    SortField;
   order:   SortOrder;
-  element: string | null;  // single selected element — null = show all
-  work:    string | null;  // single selected work — null = show all
+  element: string | null;
+  work:    string | null;
 };
 
 export const DEFAULT_FILTER: FilterState = {
   search: "", sort: "name", order: "asc", element: null, work: null,
 };
 
-// ── Work icon map — single source of truth, imported by PalCard ───
+// ── Work icon map — single source of truth ────────────────────────
 export const WORK_ICON_MAP: Record<string, string> = {
   kindling:     "/images/work/kindling.png",
   watering:     "/images/work/watering.png",
@@ -32,7 +32,6 @@ export const WORK_ICON_MAP: Record<string, string> = {
   farming:      "/images/work/farming.png",
 };
 
-// ── Static lists ──────────────────────────────────────────────────
 const ELEMENTS: { id: string; label: string }[] = [
   { id: "ice",      label: "Ice"      },
   { id: "dragon",   label: "Dragon"   },
@@ -60,53 +59,52 @@ const WORKS: { id: string; label: string }[] = [
   { id: "watering",     label: "Watering"     },
 ];
 
-// ── Props ─────────────────────────────────────────────────────────
 type Props = {
   value:    FilterState;
   onChange: (next: FilterState) => void;
-  compact?: boolean; // true = edit page left panel (search + sort + order only)
+  compact?: boolean;
 };
 
 export default function FilterBar({ value, onChange, compact = false }: Props) {
   const set = (patch: Partial<FilterState>) => onChange({ ...value, ...patch });
-
-  // Single-select toggle: clicking an already-active item deselects it.
-  // Clicking a different item switches to it (previous auto-deselects).
   const toggleElement = (id: string) => set({ element: value.element === id ? null : id });
   const toggleWork    = (id: string) => set({ work:    value.work    === id ? null : id });
 
+  const searchBar = (
+    <div className="relative flex items-center flex-1 min-w-0 bg-[#0d1628] border-[1.5px] border-[#2a3456] rounded-[14px] transition-all duration-150 overflow-hidden focus-within:border-[#4f66ff] focus-within:shadow-[0_0_0_3px_rgba(79,102,255,0.15)]">
+      <span className="px-[14px] text-[15px] text-pal-mut flex-shrink-0 pointer-events-none leading-none">🔍</span>
+      <input
+        className="flex-1 bg-transparent border-none outline-none text-white text-sm py-[11px] pr-2 pl-0 font-[inherit] min-w-0 placeholder:text-pal-mut"
+        value={value.search}
+        onChange={(e) => set({ search: e.target.value })}
+        placeholder={compact ? "Search pals..." : "Enter name"}
+      />
+      {value.search && (
+        <button className="bg-none border-none text-pal-mut text-[13px] px-3 cursor-pointer flex-shrink-0 leading-none hover:text-white" onClick={() => set({ search: "" })}>✕</button>
+      )}
+    </div>
+  );
+
+  const selectCls = "field w-auto min-w-[140px] py-2 px-3 text-[13px] cursor-pointer sm:min-w-[110px]";
+
   return (
-    <div className={`filter-bar${compact ? " filter-bar-compact" : ""}`}>
+    <div className={`w-full max-w-[1200px] flex flex-col gap-2.5 mb-4 ${compact ? "max-w-none mb-2.5 gap-[7px]" : ""}`}>
 
-      {/* ── Row 1: search + (compact) sort/order ── */}
-      <div className="filter-top-row">
-        <div className="filter-search-wrap">
-          {!compact && <span className="filter-label">Search for Pal</span>}
-          <div className="search-bar">
-            <span className="search-icon">🔍</span>
-            <input
-              className="search-input"
-              value={value.search}
-              onChange={(e) => set({ search: e.target.value })}
-              placeholder={compact ? "Search pals..." : "Enter name"}
-            />
-            {value.search && (
-              <button className="search-clear" onClick={() => set({ search: "" })}>✕</button>
-            )}
-          </div>
+      {/* Row 1: search + (compact) sort/order */}
+      <div className="flex items-end gap-2.5 flex-wrap">
+        <div className="flex flex-col gap-[5px] flex-1 min-w-[200px] min-w-0">
+          {!compact && <span className="text-xs font-semibold text-pal-mut whitespace-nowrap">Search for Pal</span>}
+          {searchBar}
         </div>
-
         {compact && (
           <>
-            <select className="input filter-select" value={value.sort}
-              onChange={(e) => set({ sort: e.target.value as SortField })}>
+            <select className={selectCls} value={value.sort} onChange={(e) => set({ sort: e.target.value as SortField })}>
               <option value="name">Name</option>
               <option value="level">Level</option>
               <option value="species">Species</option>
               <option value="favorites">Favorites</option>
             </select>
-            <select className="input filter-select" value={value.order}
-              onChange={(e) => set({ order: e.target.value as SortOrder })}>
+            <select className={selectCls} value={value.order} onChange={(e) => set({ order: e.target.value as SortOrder })}>
               <option value="asc">↑ Asc</option>
               <option value="desc">↓ Desc</option>
             </select>
@@ -114,84 +112,75 @@ export default function FilterBar({ value, onChange, compact = false }: Props) {
         )}
       </div>
 
-      {/* ── Full mode only: sort row + icon filter rows ── */}
+      {/* Full mode only */}
       {!compact && (
         <>
           {/* Sort + Order */}
-          <div className="filter-sort-row">
-            <div className="filter-sort-group">
-              <span className="filter-label">Sort</span>
-              <select className="input filter-select" value={value.sort}
-                onChange={(e) => set({ sort: e.target.value as SortField })}>
+          <div className="flex gap-2.5 flex-wrap">
+            <div className="flex flex-col gap-[5px]">
+              <span className="text-xs font-semibold text-pal-mut whitespace-nowrap">Sort</span>
+              <select className={selectCls} value={value.sort} onChange={(e) => set({ sort: e.target.value as SortField })}>
                 <option value="name">Name</option>
                 <option value="level">Level</option>
                 <option value="species">Species</option>
                 <option value="favorites">Favorites</option>
               </select>
             </div>
-            <div className="filter-sort-group">
-              <span className="filter-label">Order</span>
-              <select className="input filter-select" value={value.order}
-                onChange={(e) => set({ order: e.target.value as SortOrder })}>
+            <div className="flex flex-col gap-[5px]">
+              <span className="text-xs font-semibold text-pal-mut whitespace-nowrap">Order</span>
+              <select className={selectCls} value={value.order} onChange={(e) => set({ order: e.target.value as SortOrder })}>
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
               </select>
             </div>
           </div>
 
-          {/* Element + Work icon rows */}
-          <div className="filter-icon-section">
+          {/* Element + Work icon filters */}
+          <div className="flex flex-wrap gap-5 items-start">
 
-            {/* Element — single select */}
-            <div className="filter-icon-group">
-              <span className="filter-label">
-                Filter by element
-                {value.element && (
-                  <button className="filter-clear-chip" onClick={() => set({ element: null })}>
-                    {value.element} ✕
-                  </button>
-                )}
-              </span>
-              <div className="filter-icon-row">
+            {/* Element filter */}
+            <div className="flex flex-col gap-[7px]">
+              <span className="text-xs font-semibold text-pal-mut whitespace-nowrap">Filter by element</span>
+              <div className="flex flex-wrap gap-[5px]">
                 {ELEMENTS.map(({ id, label }) => (
                   <button
                     key={id}
                     type="button"
                     title={label}
-                    className={`filter-icon-btn${value.element === id ? " filter-icon-btn-active" : ""}`}
+                    className={`w-9 h-9 p-[5px] rounded-lg border flex items-center justify-center cursor-pointer transition-all duration-[130ms] ${
+                      value.element === id
+                        ? "border-pal-hl bg-[rgba(79,102,255,0.3)] shadow-[0_0_0_2px_rgba(124,140,255,0.35)]"
+                        : "border-pal-bdr bg-pal-panel hover:border-[#4f66ff] hover:bg-[rgba(79,102,255,0.14)]"
+                    }`}
                     onClick={() => toggleElement(id)}
                   >
-                    <img src={`/images/elements/${id}-icon.png`} alt={label} className="filter-icon-img" />
+                    <img src={`/images/elements/${id}-icon.png`} alt={label} className="w-[22px] h-[22px] object-contain block" />
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Work — single select */}
-            <div className="filter-icon-group">
-              <span className="filter-label">
-                Filter by work
-                {value.work && (
-                  <button className="filter-clear-chip" onClick={() => set({ work: null })}>
-                    {value.work} ✕
-                  </button>
-                )}
-              </span>
-              <div className="filter-icon-row">
+            {/* Work filter */}
+            <div className="flex flex-col gap-[7px]">
+              <span className="text-xs font-semibold text-pal-mut whitespace-nowrap">Filter by work</span>
+              <div className="flex flex-wrap gap-[5px]">
                 {WORKS.map(({ id, label }) => (
                   <button
                     key={id}
                     type="button"
                     title={label}
-                    className={`filter-icon-btn${value.work === id ? " filter-icon-btn-active" : ""}`}
+                    className={`w-9 h-9 p-[5px] rounded-lg border flex items-center justify-center cursor-pointer transition-all duration-[130ms] ${
+                      value.work === id
+                        ? "border-pal-hl bg-[rgba(79,102,255,0.3)] shadow-[0_0_0_2px_rgba(124,140,255,0.35)]"
+                        : "border-pal-bdr bg-pal-panel hover:border-[#4f66ff] hover:bg-[rgba(79,102,255,0.14)]"
+                    }`}
                     onClick={() => toggleWork(id)}
                   >
-                    <img src={WORK_ICON_MAP[id]} alt={label} className="filter-icon-img" />
+                    <img src={WORK_ICON_MAP[id]} alt={label} className="w-[22px] h-[22px] object-contain block" />
                   </button>
                 ))}
               </div>
             </div>
-
           </div>
         </>
       )}

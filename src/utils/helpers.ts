@@ -154,6 +154,9 @@ export const normalizePal = (
     parent1Id: bothWild ? "wild" : p1,
     parent2Id: bothWild ? "wild" : p2,
     notes: typeof raw.notes === "string" ? raw.notes : "",
+    ivHP:      typeof raw.ivHP      === "number" ? raw.ivHP      : 0,
+    ivAttack:  typeof raw.ivAttack  === "number" ? raw.ivAttack  : 0,
+    ivDefense: typeof raw.ivDefense === "number" ? raw.ivDefense : 0,
     favorite: typeof raw.favorite === "boolean" ? raw.favorite : false,
     favoriteOrder:
       typeof raw.favoriteOrder === "number"
@@ -178,3 +181,28 @@ export const sortPals = (pals: Pal[]) =>
 
 export const elementIcon = (element: string) =>
   `/images/elements/${element.toLowerCase()}-icon.png`;
+
+// ── IV helpers ──────────────────────────────────────────────────
+export const IV_STATS: { key: keyof import("../types").Pal; symbol: string; label: string; symbolOffset?: number }[] = [
+  { key: "ivHP",      symbol: "♥",  label: "HP",  symbolOffset: 3 },
+  { key: "ivAttack",  symbol: "✦",  label: "ATK" },
+  { key: "ivDefense", symbol: "⛨", label: "DEF" },
+];
+
+// 3-tier: white (≤50 = low/grey in-game), green (>50), gold (100 = perfect)
+export type IVColorTier = "low" | "mid" | "max";
+
+export const IV_COLORS: Record<IVColorTier, string> = {
+  low:  "#ffffff",
+  mid:  "#22c55e",
+  max:  "#f59e0b",
+};
+
+export const ivColor = (val: number): IVColorTier => {
+  if (val >= 100) return "max";
+  if (val > 50)   return "mid";
+  return "low";
+};
+
+export const ivGlow = (val: number): string =>
+  ivColor(val) === "max" ? "0 0 6px #f59e0b, 0 0 12px rgba(245,158,11,0.5)" : "none";

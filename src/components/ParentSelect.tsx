@@ -1,3 +1,4 @@
+// src/components/ParentSelect.tsx
 import type { ReactNode } from "react";
 import type { Pal, ParentRef } from "../types";
 import { titleOf } from "../utils/helpers";
@@ -15,7 +16,7 @@ type Props = {
 };
 
 export default function ParentSelect({ selectId, label, pals, selectedPal, field, value, other, disabled, onChange }: Props) {
-  const otherPal = typeof other === "number" ? pals.find((p) => p.id === other) : null;
+  const otherPal    = typeof other === "number" ? pals.find((p) => p.id === other) : null;
   const otherGender = otherPal?.gender ?? null;
 
   const eligible = pals.filter((p) => {
@@ -38,10 +39,10 @@ export default function ParentSelect({ selectId, label, pals, selectedPal, field
 
   return (
     <>
-      <label htmlFor={selectId}>{label}</label>
+      <label htmlFor={selectId} className="text-sm text-pal-sft">{label}</label>
       <select
         id={selectId}
-        className={`input${disabled ? " is-disabled" : ""}`}
+        className={`field${disabled ? " is-disabled" : ""}`}
         value={currentValue}
         disabled={disabled}
         onChange={handleChange}

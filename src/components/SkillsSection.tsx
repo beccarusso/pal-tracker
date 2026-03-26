@@ -1,3 +1,4 @@
+// src/components/SkillsSection.tsx
 import type { PassiveEntry, SkillEntry } from "../data/constants";
 import { passiveEntries } from "../data/constants";
 import { elementIcon } from "../utils/helpers";
@@ -18,13 +19,13 @@ const TIER_GLOW: Record<PassiveEntry["tier"], React.CSSProperties | null> = {
   platinum: { color: "#7fffd4", textShadow: "0 0 6px #7fffd4, 0 0 12px #00e5b0", fontSize: 12, lineHeight: 1 },
   gold:     { color: "#ffa500", textShadow: "0 0 6px #ffa500, 0 0 12px #ff8c00", fontSize: 12, lineHeight: 1 },
   normal:   null,
-  negative: { color: "var(--text-muted)", fontSize: 12, lineHeight: 1 },
+  negative: { color: "#b8c3da", fontSize: 12, lineHeight: 1 },
 };
 
 const TIER_SYMBOL: Record<PassiveEntry["tier"], string> = {
   platinum: "✦",
-  gold: "★",
-  normal: "",
+  gold:     "★",
+  normal:   "",
   negative: "▼",
 };
 
@@ -32,10 +33,10 @@ export default function SkillSection({
   title, skills, onAdd, onRemove, max, options, skillEntries, palElements = [],
 }: Props) {
   const native = new Set(palElements.map((e) => e.toLowerCase()));
+  const isPassive = !!options;
 
-  const getPassiveTier = (name: string): PassiveEntry["tier"] =>
+  const getPassiveTier  = (name: string): PassiveEntry["tier"] =>
     passiveEntries.find((e) => e.name === name)?.tier ?? "normal";
-
   const getActiveElement = (name: string): string =>
     skillEntries?.find((e) => e.name === name)?.element ?? "neutral";
 
@@ -43,32 +44,27 @@ export default function SkillSection({
 
   const handleSlotChange = (slotIndex: number, newVal: string) => {
     const current = slots[slotIndex];
-    if (newVal === "") {
-      if (current) onRemove(current);
-    } else {
-      onAdd(newVal, current ?? undefined);
-    }
+    if (newVal === "") { if (current) onRemove(current); }
+    else { onAdd(newVal, current ?? undefined); }
   };
 
   const renderPassiveOptions = (currentSlotValue: string | null) => {
-    const platinum = passiveEntries.filter((e) => e.tier === "platinum").sort((a, b) => a.name.localeCompare(b.name));
-    const gold     = passiveEntries.filter((e) => e.tier === "gold").sort((a, b) => a.name.localeCompare(b.name));
-    const normal   = passiveEntries.filter((e) => e.tier === "normal").sort((a, b) => a.name.localeCompare(b.name));
+    const byTier = (t: PassiveEntry["tier"]) =>
+      passiveEntries.filter((e) => e.tier === t).sort((a, b) => a.name.localeCompare(b.name));
     const isDisabled = (name: string) => skills.includes(name) && name !== currentSlotValue;
-    const negative = passiveEntries.filter((e) => e.tier === "negative").sort((a, b) => a.name.localeCompare(b.name));
     return (
       <>
         <optgroup label="✦ Platinum">
-          {platinum.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
+          {byTier("platinum").map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
         <optgroup label="★ Gold">
-          {gold.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
+          {byTier("gold").map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
         <optgroup label="Normal">
-          {normal.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
+          {byTier("normal").map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
         <optgroup label="⚠ Negative">
-          {negative.map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
+          {byTier("negative").map((e) => <option key={e.name} value={e.name} disabled={isDisabled(e.name)}>{e.name}</option>)}
         </optgroup>
       </>
     );
@@ -97,61 +93,64 @@ export default function SkillSection({
     );
   };
 
-  const isPassive = !!options;
-
   return (
-    <div className="section">
-      <h2 className="section-title">
+    <div className="mt-7 max-w-[760px]">
+      <h2 className="text-xl font-semibold text-white mb-3 flex items-baseline gap-2">
         {title}
-        <span style={{ fontSize: 13, fontWeight: 400, color: "var(--text-muted)", marginLeft: 8 }}>
-          {skills.length}/{max}
-        </span>
+        <span className="text-[13px] font-normal text-pal-mut">{skills.length}/{max}</span>
       </h2>
 
-      <div className={isPassive ? "skill-slots-grid" : "skill-slots-row"}>
+      <div className="flex flex-wrap gap-2 max-w-[760px]">
         {slots.map((slotVal, i) => {
-          const tier      = isPassive && slotVal ? getPassiveTier(slotVal) : null;
-          const tierGlow  = tier ? TIER_GLOW[tier] : null;
-          const tierSym   = tier ? TIER_SYMBOL[tier] : "";
-          const activeEl  = !isPassive && slotVal ? getActiveElement(slotVal) : null;
-          const label     = slotVal ?? "— None —";
+          const tier     = isPassive && slotVal ? getPassiveTier(slotVal) : null;
+          const tierGlow = tier ? TIER_GLOW[tier] : null;
+          const tierSym  = tier ? TIER_SYMBOL[tier] : "";
+          const activeEl = !isPassive && slotVal ? getActiveElement(slotVal) : null;
+          const label    = slotVal ?? "— None —";
+
+          const slotCls = slotVal
+            ? `border-[#4f66ff] bg-[#0e1a38]${tier === "negative" ? "" : ""}`
+            : "border-pal-bdr2 bg-pal-panel opacity-70";
 
           return (
-            <div key={i} className={`skill-slot ${slotVal ? (tier === "negative" ? "skill-slot-filled skill-slot-negative" : "skill-slot-filled") : "skill-slot-empty"}`}>
-              {/* invisible duplicate text used purely to size the pill */}
-              <span className="skill-slot-sizer" aria-hidden="true">
+            <div
+              key={i}
+              className={`skill-slot relative h-[38px] inline-flex items-center justify-center rounded-full border transition-colors duration-150 overflow-hidden ${slotCls}`}
+            >
+              {/* Invisible sizer */}
+              <span className="inline-flex items-center gap-[5px] px-3 text-[13px] font-semibold whitespace-nowrap invisible pointer-events-none select-none" aria-hidden="true">
                 {(activeEl || (tier && tier !== "normal")) && (
                   <span style={{ display: "inline-block", width: 18 }} />
                 )}
+                {slotVal && tier && tier !== "normal" && <span>{tierSym}</span>}
                 {label}
-
               </span>
 
-              {/* visible content layer, absolutely positioned over sizer */}
+              {/* Visible content */}
               {isPassive && slotVal ? (
                 <SkillTooltip skill={slotVal}>
-                  <span className="skill-slot-inner">
+                  <span className="absolute inset-0 flex items-center justify-center gap-[5px] px-3 pointer-events-none">
                     {tier && tier !== "normal" && tierGlow && (
                       <span style={tierGlow}>{tierSym}</span>
                     )}
-                    <span className="skill-slot-text">{label}</span>
+                    <span className="text-[13px] font-semibold whitespace-nowrap text-white">{label}</span>
                   </span>
                 </SkillTooltip>
               ) : (
-                <span className="skill-slot-inner">
+                <span className="absolute inset-0 flex items-center justify-center gap-[5px] px-3 pointer-events-none">
                   {activeEl && (
-                    <img src={elementIcon(activeEl)} alt={activeEl} className="skill-slot-icon" />
+                    <img src={elementIcon(activeEl)} alt={activeEl} className="w-3.5 h-3.5 object-contain flex-shrink-0" />
                   )}
                   {tier && tier !== "normal" && tierGlow && (
                     <span style={tierGlow}>{tierSym}</span>
                   )}
-                  <span className="skill-slot-text">{label}</span>
+                  <span className="text-[13px] font-semibold whitespace-nowrap text-white">{label}</span>
                 </span>
               )}
 
-              {/* native select overlaid invisibly for interaction */}
+              {/* Invisible select overlay */}
               <select
-                className="skill-slot-select-overlay"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer border-none bg-transparent"
                 value={slotVal ?? ""}
                 onChange={(e) => handleSlotChange(i, e.target.value)}
                 title={label}
@@ -160,16 +159,14 @@ export default function SkillSection({
                 {isPassive ? renderPassiveOptions(slotVal) : renderActiveOptions(slotVal)}
               </select>
 
-              {/* clear button — only shown on filled slots, visible on hover via CSS */}
+              {/* Clear button */}
               {slotVal && (
                 <button
                   type="button"
-                  className="skill-slot-clear"
+                  className="slot-clear absolute right-[7px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-[rgba(99,120,255,0.5)] bg-[rgba(79,102,255,0.18)] text-[#9aabff] text-[13px] flex items-center justify-center cursor-pointer p-0 z-[2] transition-all duration-150 hover:bg-[rgba(79,102,255,0.4)] hover:border-pal-hl hover:text-white"
                   onClick={(e) => { e.stopPropagation(); onRemove(slotVal); }}
                   title="Remove skill"
-                >
-                  ×
-                </button>
+                >×</button>
               )}
             </div>
           );
