@@ -681,6 +681,17 @@
       "cooling": 1
     }
   },
+    {
+    "species": "Chillet Ignis",
+    "element": [
+      "fire",
+      "dragon"
+    ],
+    "workSuitability": {
+      "gathering": 1,
+      "kindling": 2
+    }
+  },
   {
     "species": "Univolt",
     "element": [
