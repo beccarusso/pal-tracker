@@ -97,7 +97,7 @@ export const passiveEntries: PassiveEntry[] = [
   { name: "Glutton", tier: "negative", desc: "Hunger decreases 10% faster" },
   { name: "Hooligan", tier: "negative", desc: "Attack +15%\nWork Speed -10%" },
   { name: "Masochist", tier: "negative", desc: "Defense +15%\nAttack -15%" },
-  { name: "Musclehead", tier: "negative", desc: "Attack +30%\nWork Speed -50%" },
+  { name: "Musclehead", tier: "gold", desc: "Attack +30%\nWork Speed -50%" },
   { name: "Pacifist", tier: "negative", desc: "Attack -20%" },
   { name: "Sadist", tier: "negative", desc: "Attack +15%\nDefense -15%" },
   { name: "Shabby", tier: "negative", desc: "Sold item value -10%" },
