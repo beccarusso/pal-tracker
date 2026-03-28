@@ -39,11 +39,15 @@ export default function App() {
   const [dirtyIds, setDirtyIds]       = useState<Set<number>>(new Set());
   const [importStatus, setImportStatus] = useState<"idle" | "success" | "error">("idle");
   const importRef = useRef<HTMLInputElement>(null);
-  const [page, setPage]               = useState<Page>(
-    () => (sessionStorage.getItem(SESSION_PAGE) as Page) ?? "collection"
-  );
+  const [page, setPage]               = useState<Page>(() => {
+    const saved = localStorage.getItem(SESSION_PAGE) as Page | null;
+    const savedId = localStorage.getItem(SESSION_KEY);
+    // don't restore edit page if there's no selected pal
+    if (saved === "edit" && !savedId) return "collection";
+    return saved ?? "collection";
+  });
   const [selectedPalId, _setSelectedPalId] = useState<number | null>(() => {
-    const s = sessionStorage.getItem(SESSION_KEY);
+    const s = localStorage.getItem(SESSION_KEY);
     return s ? Number(s) : null;
   });
   const [hoveredPalId, setHoveredPalId]   = useState<number | null>(null);
@@ -56,9 +60,9 @@ export default function App() {
   // ── Helpers ────────────────────────────────────────────────────
   const setSelectedPalId = (id: number | null) => {
     _setSelectedPalId(id);
-    id === null ? sessionStorage.removeItem(SESSION_KEY) : sessionStorage.setItem(SESSION_KEY, String(id));
+    id === null ? localStorage.removeItem(SESSION_KEY) : localStorage.setItem(SESSION_KEY, String(id));
   };
-  const navigate    = (p: Page) => { setPage(p); sessionStorage.setItem(SESSION_PAGE, p); };
+  const navigate    = (p: Page) => { setPage(p); localStorage.setItem(SESSION_PAGE, p); };
   const selectPalId = setSelectedPalId as React.Dispatch<React.SetStateAction<number | null>>;
   const markDirty   = (id: number) => setDirtyIds((prev) => new Set(prev).add(id));
 
@@ -244,6 +248,20 @@ export default function App() {
     setPalListOpen(false);
   };
 
+  const copyPal = () => {
+    if (!selectedPal) return;
+    const copy: Pal = {
+      ...selectedPal,
+      id: Date.now(),
+      name: `${selectedPal.name} (Copy)`,
+      favorite: false,
+      favoriteOrder: null,
+    };
+    setPals((prev) => [...prev.filter((p) => savedIds.has(p.id)), copy]);
+    setSelectedPalId(copy.id);
+    navigate("edit");
+  };
+
   const requestDelete = (id: number) => setConfirmDeleteId(id);
 
   const executeDeletion = (deadId: number) => {
@@ -274,7 +292,7 @@ export default function App() {
     const pal = pals.find((p) => p.id === id);
     if (!pal || !window.confirm(`Delete ${titleOf(pal)}? This cannot be undone.`)) return;
     _setSelectedPalId(id);
-    sessionStorage.setItem(SESSION_KEY, String(id));
+    localStorage.setItem(SESSION_KEY, String(id));
     setTimeout(() => requestDelete(id), 0);
   };
 
@@ -605,6 +623,13 @@ export default function App() {
         {/* Import / Save / Delete */}
         <div className="flex items-center justify-end max-w-[560px] mb-2.5 gap-2">
           <input ref={importRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
+          <button
+            className={BTN_SEC}
+            onClick={copyPal}
+            title="Duplicate this pal with all its data"
+          >
+            ⧉ Copy Pal
+          </button>
           <button
             className={`${BTN_SEC} ${importStatus === "success" ? "!bg-[#16803d] !border-[#166534] text-white" : importStatus === "error" ? "!bg-pal-red !border-[#7f1d1d] text-white" : ""}`}
             onClick={() => importRef.current?.click()}
