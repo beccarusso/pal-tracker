@@ -11,7 +11,7 @@ import {
   EMPTY_STATE_IMAGE, getSortedActiveSkills, passiveOptions, WILD_IMAGE, passiveEntries,
 } from "./data/constants";
 import {
-  buildChildMap, elementIcon, getParentWarnings, imgError, imgPath,
+  buildChildMap, elementIcon, getParentWarnings, imgBorderCls, imgError, imgPath,
   loadJSON, normalizePal, sortPals, titleOf,
   IV_STATS, IV_COLORS, ivColor,
   type RawPal, type SpeciesData,
@@ -305,10 +305,14 @@ export default function App() {
     updatePal({ ...selectedPal, [field]: next });
   };
 
-  const getParentInfo = (ref: ParentRef) => ({
-    name:  ref === "wild" ? "Wild" : typeof ref === "number" ? titleOf(palById.get(ref) ?? { name: "", species: "Unknown" }) : "",
-    image: ref === "wild" ? WILD_IMAGE : typeof ref === "number" ? imgPath(palById.get(ref)?.species ?? "") : "",
-  });
+  const getParentInfo = (ref: ParentRef) => {
+    const pal = typeof ref === "number" ? palById.get(ref) : null;
+    return {
+      name:   ref === "wild" ? "Wild" : pal ? titleOf(pal) : "",
+      image:  ref === "wild" ? WILD_IMAGE : pal ? imgPath(pal.species) : "",
+      gender: pal?.gender ?? null,
+    };
+  };
 
   // ── Auth ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -540,7 +544,7 @@ export default function App() {
             onClick={() => setPalListOpen((o) => !o)}
           >
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              <img src={imgPath(selectedPal.species)} alt={selectedPal.species} className="w-11 h-11 rounded-full object-cover border-2 border-pal-acc" onError={imgError} />
+              <img src={imgPath(selectedPal.species)} alt={selectedPal.species} className={`w-11 h-11 rounded-full object-cover border-2 ${imgBorderCls(selectedPal.gender)}`} onError={imgError} />
               <div className="min-w-0">
                 <div className="text-[22px] font-bold leading-[1.1] whitespace-nowrap overflow-hidden text-ellipsis">{titleOf(selectedPal)}</div>
                 <div className="text-pal-sft text-[15px]">{selectedPal.species}</div>
@@ -580,7 +584,7 @@ export default function App() {
         <div className="flex items-start justify-between gap-[18px] mb-6 mt-3 min-w-0">
           <div className="flex items-start gap-[18px] min-w-0 flex-1">
             <img src={imgPath(selectedPal.species)} alt={selectedPal.species}
-              className="w-[92px] h-[92px] sm:w-[72px] sm:h-[72px] rounded-full object-cover object-center bg-[#0a1326] border-4 border-[#5d74ff] shadow-[0_0_0_2px_rgba(93,116,255,0.14)] block flex-shrink-0"
+              className={`w-[92px] h-[92px] sm:w-[72px] sm:h-[72px] rounded-full object-cover object-center bg-[#0a1326] border-4 block flex-shrink-0 ${imgBorderCls(selectedPal.gender)}`}
               onError={imgError} />
             <div className="flex flex-col items-start pt-0.5 min-w-0">
               <div className="flex items-center gap-2.5 mb-1.5 min-w-0 flex-wrap">
@@ -719,10 +723,10 @@ export default function App() {
             <label className="text-sm text-pal-sft">Parents</label>
             <div className="flex flex-wrap gap-2.5 items-center">
               {parents.length ? parents.map((ref, i) => {
-                const { name, image } = getParentInfo(ref);
+                const { name, image, gender } = getParentInfo(ref);
                 return (
                   <div key={`${String(ref)}-${i}`} className="inline-flex items-center gap-2.5 px-3 py-1.5 pl-1.5 rounded-full border border-[#48506a] bg-[#151d36] text-white">
-                    <img src={image} alt={name} className="w-10 h-10 rounded-full object-cover border-2 border-[#4f66ff] bg-[#0a1326]" onError={imgError} />
+                    <img src={image} alt={name} className={`w-10 h-10 rounded-full object-cover border-2 bg-[#0a1326] ${imgBorderCls(gender)}`} onError={imgError} />
                     <span>{name}</span>
                   </div>
                 );
@@ -768,7 +772,7 @@ export default function App() {
                 <div key={i} className="parent-bubble w-[210px] bg-pal-panel2 border border-[#4f66ff] rounded-[14px] px-3.5 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.3),0_0_0_1px_rgba(79,102,255,0.15)]">
                   <div className="flex items-center gap-2.5 mb-2.5">
                     <img src={imgPath(previewPal.species)} alt={previewPal.species}
-                      className="w-9 h-9 rounded-full border-2 border-[#4f66ff] bg-[#0a1326] object-cover flex-shrink-0"
+                      className={`w-9 h-9 rounded-full border-2 bg-[#0a1326] object-cover flex-shrink-0 ${imgBorderCls(previewPal.gender)}`}
                       onError={imgError} />
                     <div>
                       <div className="text-[13px] font-bold text-white">{titleOf(previewPal)}</div>

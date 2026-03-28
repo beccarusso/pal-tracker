@@ -27,6 +27,10 @@ export const titleOf = ({ name, species }: Pick<Pal, "name" | "species">) =>
 export const loadJSON = async <T,>(path: string): Promise<T> =>
   fetch(path).then((r) => r.json());
 
+/** Returns border color class for a pal image based on gender */
+export const imgBorderCls = (gender: string | null | undefined): string =>
+  gender === "female" ? "border-[#f472b6]" : "border-pal-acc";
+
 export const imgError = (e: SyntheticEvent<HTMLImageElement>) => {
   e.currentTarget.onerror = null;
   e.currentTarget.src = FALLBACK_IMAGE;

@@ -2,7 +2,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { Pal } from "../types";
 import {
-  elementIcon, imgError, imgPath, titleOf,
+  elementIcon, imgError, imgPath, titleOf, imgBorderCls,
   IV_STATS, IV_COLORS, ivColor, ivGlow,
 } from "../utils/helpers";
 import { passiveEntries } from "../data/constants";
@@ -104,16 +104,16 @@ export default function PalCard({
           <img
             src={imgPath(pal.species)}
             alt={pal.species}
-            className="w-[92px] h-[92px] rounded-full object-cover object-center bg-[#0a1326] border-4 border-pal-acc shadow-[0_0_0_2px_rgba(72,99,255,0.14)] block flex-shrink-0"
+            className={`w-[92px] h-[92px] rounded-full object-cover object-center bg-[#0a1326] border-4 block flex-shrink-0 ${imgBorderCls(pal.gender)}`}
             onError={imgError}
           />
 
           {/* Info column */}
           <div className="flex-1 min-w-0 text-left">
-            <div className="inline-flex items-baseline gap-1 font-bold text-[19px] leading-[1.1] mb-1 whitespace-nowrap min-w-0 overflow-hidden">
-              <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-shrink min-w-0">{titleOf(pal)}</span>
+            <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0 font-bold text-[19px] leading-[1.2] mb-1 min-w-0">
+              <span className="break-words min-w-0">{titleOf(pal)}</span>
               {gender && (
-                <span className="text-[13px] font-bold leading-none flex-shrink-0 ml-1 self-center" style={{ color: gender.color }}>
+                <span className="text-[13px] font-bold leading-none flex-shrink-0 ml-0.5 self-center" style={{ color: gender.color }}>
                   {gender.symbol}
                 </span>
               )}
@@ -235,7 +235,7 @@ export default function PalCard({
           <img
             src={imgPath(pal.species)}
             alt={pal.species}
-            className="w-[72px] h-[72px] rounded-full object-cover object-center bg-[#0a1326] border-[3px] border-pal-acc shadow-[0_0_0_2px_rgba(72,99,255,0.14)] block flex-shrink-0"
+            className={`w-[72px] h-[72px] rounded-full object-cover object-center bg-[#0a1326] border-[3px] block flex-shrink-0 ${imgBorderCls(pal.gender)}`}
             onError={imgError}
           />
         </div>
@@ -297,14 +297,14 @@ export default function PalCard({
           <img
             src={imgPath(pal.species)}
             alt={pal.species}
-            className="w-[72px] h-[72px] rounded-full object-cover object-center bg-[#0a1326] border-[3px] border-pal-acc shadow-[0_0_0_2px_rgba(72,99,255,0.14)] block flex-shrink-0"
+            className={`w-[72px] h-[72px] rounded-full object-cover object-center bg-[#0a1326] border-[3px] block flex-shrink-0 ${imgBorderCls(pal.gender)}`}
             onError={imgError}
           />
           <div className="flex-1 min-w-0 text-left">
-            <div className="inline-flex items-baseline gap-1 font-bold text-[22px] leading-[1.1] whitespace-nowrap min-w-0">
-              <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-shrink min-w-0">{titleOf(pal)}</span>
+            <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0 font-bold text-[22px] leading-[1.2] min-w-0">
+              <span className="break-words min-w-0">{titleOf(pal)}</span>
               {gender && (
-                <span className="text-[13px] font-bold leading-none flex-shrink-0 ml-1 self-center" style={{ color: gender.color }}>
+                <span className="text-[13px] font-bold leading-none flex-shrink-0 ml-0.5 self-center" style={{ color: gender.color }}>
                   {gender.symbol}
                 </span>
               )}

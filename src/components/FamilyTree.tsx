@@ -2,7 +2,7 @@
 import { useState, useCallback, useRef } from "react";
 import type { Pal } from "../types";
 import {
-  imgPath, imgError, titleOf, buildChildMap,
+  imgPath, imgError, imgBorderCls, titleOf, buildChildMap,
   IV_STATS, IV_COLORS, ivColor, ivGlow,
 } from "../utils/helpers";
 import { passiveEntries } from "../data/constants";
@@ -59,7 +59,7 @@ function SkillsBubble({ pal, side }: { pal: Pal; side: "left" | "right" }) {
     <div className={`ft-bubble ${side === "left" ? "ft-bubble-left" : ""}`}>
       <div className="flex items-start gap-2 mb-2.5">
         <img src={imgPath(pal.species)} alt={pal.species}
-          className="w-9 h-9 rounded-full border-2 border-[#4f66ff] bg-[#0a1326] object-cover flex-shrink-0"
+          className={`w-9 h-9 rounded-full border-2 bg-[#0a1326] object-cover flex-shrink-0 ${imgBorderCls(pal.gender)}`}
           onError={imgError} />
         <div className="flex-1 min-w-0">
           <div className="text-[13px] font-bold text-white">{titleOf(pal)}</div>
@@ -111,10 +111,6 @@ function genderNodeCls(pal: Pal | null) {
     : "border-[#f472b6] shadow-[0_0_0_1px_rgba(244,114,182,0.2),0_0_10px_rgba(244,114,182,0.08)]";
 }
 
-function genderImgCls(pal: Pal | null) {
-  if (!pal?.gender) return "border-[#4863ff]";
-  return pal.gender === "male" ? "border-[#00F9FB]" : "border-[#f472b6]";
-}
 
 type NodeProps = {
   node: TreeNode;
@@ -193,7 +189,7 @@ function Node({ node, onReroot, isRoot, positionHint = "center" }: NodeProps) {
         <img
           src={imgPath(pal.species)}
           alt={pal.species}
-          className={`w-[52px] h-[52px] rounded-full object-cover border-2 bg-[#0a1326] flex-shrink-0 ${isRoot ? "border-[#ff50c0] shadow-[0_0_8px_rgba(255,80,200,0.4)]" : genderImgCls(pal)}`}
+          className={`w-[52px] h-[52px] rounded-full object-cover border-2 bg-[#0a1326] flex-shrink-0 ${isRoot ? "border-[#ff50c0] shadow-[0_0_8px_rgba(255,80,200,0.4)]" : imgBorderCls(pal.gender)}`}
           onError={imgError}
         />
         <div className="flex flex-col items-center gap-px">
